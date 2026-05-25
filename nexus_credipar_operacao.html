@@ -3,228 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CREDIPAR – Ranking | Nexus</title>
+<title>Ranking CREDIPAR | Nexus</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-  :root {
-    --navy: #0d1b2a;
-    --navy2: #1b2e45;
-    --navy3: #243b55;
-    --accent: #1e90ff;
-    --gold: #f0a500;
-    --green: #22c55e;
-    --red: #ef4444;
-    --text: #e2e8f0;
-    --text2: #94a3b8;
-    --border: rgba(255,255,255,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-
-  /* HEADER */
-  header {
-    background: var(--navy2);
-    border-bottom: 2px solid var(--accent);
-    padding: 0 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 70px; position: sticky; top: 0; z-index: 100;
-  }
-  .logo { display: flex; align-items: center; gap: 14px; }
-  .logo-badge { background: var(--accent); color: #fff; font-weight: 800; font-size: 14px; padding: 5px 12px; border-radius: 7px; letter-spacing: 1px; }
-  .logo-title { font-size: 18px; font-weight: 800; }
-  .logo-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .header-right { display: flex; align-items: center; gap: 16px; }
-
-  /* CICLO BADGE */
-  .ciclo-badge { background: rgba(30,144,255,0.1); border: 1px solid rgba(30,144,255,0.25); border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; color: var(--accent); }
-  .du-badge { background: rgba(240,165,0,0.1); border: 1px solid rgba(240,165,0,0.25); border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; color: var(--gold); }
-
-  /* MAIN */
-  main { padding: 1.5rem 2rem 3rem; max-width: 1300px; margin: 0 auto; }
-
-  /* SUMMARY CARDS */
-  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-bottom: 2rem; }
-  .sum-card { background: var(--navy2); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.5rem; text-align: center; }
-  .sum-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-  .sum-value { font-size: 22px; font-weight: 800; }
-  .sum-value.green { color: var(--green); }
-  .sum-value.gold { color: var(--gold); }
-  .sum-value.blue { color: var(--accent); }
-  .sum-value.red { color: var(--red); }
-
-  /* RANKING TABLE */
-  .rank-wrap { background: var(--navy2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-  .rank-header-bar { padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-  .rank-header-bar h2 { font-size: 16px; font-weight: 700; }
-  .last-update { font-size: 12px; color: var(--text2); }
-
-  table { width: 100%; border-collapse: collapse; }
-  thead th {
-    background: rgba(255,255,255,0.03);
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 11px;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    border-bottom: 1px solid var(--border);
-  }
-  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background .15s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(255,255,255,0.03); }
-  tbody td { padding: 14px 16px; vertical-align: middle; }
-
-  /* POSIÇÃO */
-  .pos { font-size: 20px; font-weight: 900; width: 32px; text-align: center; }
-  .p1 { color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,0.4); }
-  .p2 { color: #c0c0c0; }
-  .p3 { color: #cd7f32; }
-  .p-rest { color: var(--text2); font-size: 16px; }
-
-  /* OPERADOR */
-  .op-cell { display: flex; align-items: center; gap: 12px; }
-  .op-avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #0a6edb);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 14px; flex-shrink: 0;
-  }
-  .p1-row .op-avatar { background: linear-gradient(135deg, #ffd700, #f0a500); color: #1b2e45; }
-  .p2-row .op-avatar { background: linear-gradient(135deg, #c0c0c0, #888); color: #1b2e45; }
-  .p3-row .op-avatar { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
-  .op-name { font-weight: 700; font-size: 14px; }
-
-  /* VALORES */
-  .val { font-weight: 600; font-size: 14px; }
-  .val-dim { font-size: 12px; color: var(--text2); }
-
-  /* BADGES PCT */
-  .pct { padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; display: inline-block; }
-  .pct-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-  .pct-gold  { background: rgba(240,165,0,0.15);  color: var(--gold);  border: 1px solid rgba(240,165,0,0.2); }
-  .pct-red   { background: rgba(239,68,68,0.15);  color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
-
-  /* BARRA DE PROGRESSO */
-  .bar-wrap { height: 6px; background: rgba(255,255,255,0.07); border-radius: 99px; width: 120px; overflow: hidden; }
-  .bar { height: 100%; border-radius: 99px; transition: width .5s ease; }
-  .bar-green { background: linear-gradient(90deg, #22c55e, #16a34a); }
-  .bar-gold  { background: linear-gradient(90deg, #f0a500, #d97706); }
-  .bar-red   { background: linear-gradient(90deg, #ef4444, #dc2626); }
-
-  /* PODIUM TOP 3 */
-  .podium-row { background: rgba(30,144,255,0.04); }
-  .p1-row { background: rgba(255,215,0,0.04) !important; border-left: 3px solid #ffd700; }
-  .p2-row { background: rgba(192,192,192,0.04) !important; border-left: 3px solid #c0c0c0; }
-  .p3-row { background: rgba(205,127,50,0.04) !important; border-left: 3px solid #cd7f32; }
-
-  /* CROWN ICON */
-  .crown { font-size: 18px; margin-left: 4px; }
-
-  /* LOADING */
-  #loading { position: fixed; inset: 0; background: var(--navy); z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
-  .spinner { width: 52px; height: 52px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #loading p { font-size: 16px; color: var(--text2); }
-  .hidden { display: none !important; }
-
-  /* ATUALIZAÇÃO AUTO */
-  .auto-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
-  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(0.8); } }
-
-  /* EMPTY STATE */
-  .empty { text-align: center; padding: 4rem 2rem; color: var(--text2); }
-  .empty-icon { font-size: 48px; margin-bottom: 1rem; }
-  .empty-msg { font-size: 16px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    header { padding: 0 1rem; height: auto; flex-direction: column; gap: 8px; padding: 12px 1rem; }
-    main { padding: 1rem; }
-    .bar-wrap { width: 80px; }
-    .val-dim { display: none; }
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy-900: #0a1628; --navy-800: #0f2044; --navy-700: #1a3260;
+  --navy-600: #1e3d7a; --navy-500: #2952a3; --navy-400: #3d6bc4;
+  --navy-300: #6b93d6; --navy-200: #a8c0e8;
+  --gold: #c9a84c; --silver: #8a9bb0; --bronze: #b07850;
+  --green: #4cba80; --amber: #e8a030; --warn: #e07840;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+html, body { min-height: 100vh; background: #060f1e; font-family: var(--font); color: #e2eaf4; }
+body { display: flex; flex-direction: column; align-items: center; padding: 24px 16px 48px; }
+.wrap { width: 100%; max-width: 1100px; }
+.nexus-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.nexus-logo { font-size: 13px; font-weight: 600; color: var(--navy-300); letter-spacing: 0.08em; text-transform: uppercase; }
+.nexus-logo span { color: var(--navy-400); font-weight: 400; }
+.dash { background: var(--navy-900); border-radius: 16px; overflow: hidden; border: 1px solid var(--navy-800); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+.dash-header { background: var(--navy-800); padding: 20px 28px 18px; border-bottom: 1px solid var(--navy-700); display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.logo-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--navy-500); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dash-logo-wrap { display: flex; align-items: center; gap: 12px; }
+.dash-title { font-size: 16px; font-weight: 600; color: #fff; }
+.dash-sub { font-size: 12px; color: var(--navy-300); margin-top: 3px; }
+.dash-badge { font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 20px; background: var(--navy-700); color: var(--navy-200); border: 1px solid var(--navy-600); white-space: nowrap; align-self: center; }
+.dash-badge.ok { background: rgba(76,186,128,0.15); color: #4cba80; border-color: rgba(76,186,128,0.3); }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--navy-800); }
+@media (max-width: 600px) { .metrics { grid-template-columns: repeat(2,1fr); } }
+.metric { background: var(--navy-900); padding: 18px 24px; }
+.metric-label { font-size: 10px; font-weight: 600; color: var(--navy-300); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+.metric-value { font-size: 22px; font-weight: 600; color: #fff; line-height: 1; }
+.metric-sub { font-size: 11px; color: var(--navy-400); margin-top: 5px; }
+.table-controls { padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: var(--navy-900); border-top: 1px solid var(--navy-800); border-bottom: 1px solid var(--navy-800); }
+.sort-pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pill { font-size: 11px; padding: 5px 14px; border-radius: 20px; cursor: pointer; background: transparent; color: var(--navy-300); border: 1px solid var(--navy-700); transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; font-family: var(--font); }
+.pill.active { background: var(--navy-600); color: #fff; border-color: var(--navy-500); }
+.pill:hover:not(.active) { border-color: var(--navy-500); color: var(--navy-200); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+thead { background: var(--navy-800); }
+thead th { font-size: 10px; font-weight: 600; color: var(--navy-300); text-transform: uppercase; letter-spacing: 0.07em; padding: 11px 18px; text-align: left; border-bottom: 1px solid var(--navy-700); white-space: nowrap; }
+thead th.r { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--navy-800); transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+tbody td { padding: 12px 18px; font-size: 13px; color: #e2eaf4; white-space: nowrap; }
+tbody td.r { text-align: right; }
+tbody td.muted { color: var(--navy-300); font-size: 12px; }
+.rank-num { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.r1 { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.5); }
+.r2 { background: rgba(138,155,176,0.15); color: var(--silver); border: 1px solid rgba(138,155,176,0.4); }
+.r3 { background: rgba(176,120,80,0.15); color: var(--bronze); border: 1px solid rgba(176,120,80,0.5); }
+.rn { background: var(--navy-800); color: var(--navy-300); border: 1px solid var(--navy-700); }
+.op-name { font-weight: 500; color: #fff; font-size: 13px; }
+.bar-wrap { display: flex; align-items: center; gap: 8px; }
+.bar-bg { flex: 1; height: 5px; border-radius: 3px; background: var(--navy-700); min-width: 60px; }
+.bar-fill { height: 5px; border-radius: 3px; }
+.bar-label { font-size: 12px; font-weight: 600; min-width: 44px; text-align: right; }
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.loading { text-align: center; padding: 4rem; color: var(--navy-400); font-size: 14px; }
+.loading i { font-size: 32px; display: block; margin-bottom: 12px; opacity: 0.4; }
+.update-info { font-size: 11px; color: var(--navy-500); padding: 10px 28px; border-top: 1px solid var(--navy-800); text-align: right; }
+.footer { margin-top: 16px; font-size: 11px; color: var(--navy-600); text-align: center; }
 </style>
 </head>
 <body>
-
-<div id="loading">
-  <div class="spinner"></div>
-  <p>Carregando ranking…</p>
-</div>
-
-<header>
-  <div class="logo">
-    <div class="logo-badge">NEXUS</div>
-    <div>
-      <div class="logo-title">🏆 Ranking CREDIPAR</div>
-      <div class="logo-sub">Carteira 59 + Carteira 69 · Com.Ass</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="ciclo-badge" id="h-ciclo">Ciclo --</div>
-    <div class="du-badge" id="h-du">DU: -- / --</div>
-    <div class="auto-badge"><div class="pulse"></div>Ao vivo</div>
-  </div>
-</header>
-
-<main>
-
-  <!-- CARDS RESUMO -->
-  <div class="summary">
-    <div class="sum-card">
-      <div class="sum-label">Total Realizado</div>
-      <div class="sum-value green" id="s-realizado">R$ --</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">Meta da Equipe</div>
-      <div class="sum-value gold" id="s-meta">R$ --</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">% Realizado</div>
-      <div class="sum-value blue" id="s-pct-real">--%</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">Projeção Equipe</div>
-      <div class="sum-value" id="s-proj">R$ --</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">% Projeção</div>
-      <div class="sum-value" id="s-pct-proj">--%</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">Operadores no Ranking</div>
-      <div class="sum-value blue" id="s-ops">--</div>
-    </div>
+<div class="wrap">
+  <div class="nexus-bar">
+    <div class="nexus-logo">Nexus <span>/ Assessoria de Cobrança</span></div>
+    <div style="font-size:11px;color:var(--navy-600)" id="today-date"></div>
   </div>
 
-  <!-- RANKING -->
-  <div class="rank-wrap">
-    <div class="rank-header-bar">
-      <h2>📊 Ranking de Operadores · Ordenado por % Projeção</h2>
-      <div class="last-update" id="last-update">--</div>
+  <div class="dash">
+    <div class="dash-header">
+      <div class="dash-logo-wrap">
+        <div class="logo-mark"><i class="ti ti-chart-bar" style="font-size:18px;color:#fff"></i></div>
+        <div>
+          <div class="dash-title">Ranking de operadores — CREDIPAR</div>
+          <div class="dash-sub" id="period-label">Carregando...</div>
+        </div>
+      </div>
+      <span class="dash-badge" id="status-badge">Carregando...</span>
     </div>
-    <div style="overflow-x:auto">
-      <table>
+
+    <div class="metrics" id="metrics" style="display:none">
+      <div class="metric"><div class="metric-label">Total comissão</div><div class="metric-value" id="m-com">—</div><div class="metric-sub">no ciclo</div></div>
+      <div class="metric"><div class="metric-label">Total recebido</div><div class="metric-value" id="m-rec">—</div><div class="metric-sub">no ciclo</div></div>
+      <div class="metric"><div class="metric-label">Operadores</div><div class="metric-value" id="m-ops">—</div><div class="metric-sub">com meta definida</div></div>
+      <div class="metric"><div class="metric-label">Dias úteis restantes</div><div class="metric-value" id="m-du">—</div><div class="metric-sub" id="m-du-sub">—</div></div>
+    </div>
+
+    <div class="table-controls" id="controls" style="display:none">
+      <div class="sort-pills">
+        <span style="font-size:11px;color:var(--navy-400)">Ordenar:</span>
+        <button class="pill active" data-key="projecao_pct" onclick="sortBy('projecao_pct')">% Projeção</button>
+        <button class="pill" data-key="meta_pct" onclick="sortBy('meta_pct')">% Realizado</button>
+        <button class="pill" data-key="comissao" onclick="sortBy('comissao')">Comissão</button>
+        <button class="pill" data-key="nome" onclick="sortBy('nome')">Nome</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="loading" id="loading-msg"><i class="ti ti-loader ti-spin"></i>Carregando ranking...</div>
+      <table id="ranking-table" style="display:none">
         <thead>
           <tr>
-            <th style="width:50px">#</th>
+            <th style="width:48px">#</th>
             <th>Operador</th>
-            <th>Realizado (Com.Ass)</th>
-            <th>Meta Mensal</th>
-            <th>% Realizado</th>
-            <th>Projeção R$</th>
-            <th>% Projeção</th>
+            <th class="r">Realizado</th>
+            <th class="r">Meta</th>
+            <th style="min-width:160px">% Realizado</th>
+            <th class="r">Projeção R$</th>
+            <th style="min-width:150px">% Projeção</th>
           </tr>
         </thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="ranking-body"></tbody>
       </table>
     </div>
+    <div class="update-info" id="update-info"></div>
   </div>
+  <div class="footer">Nexus Assessoria de Cobrança · Dashboard CREDIPAR · Uso interno</div>
+</div>
 
-</main>
-
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -242,141 +143,73 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let metas = {}, pagamentos = {}, ciclo = {};
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 
-function encodeNome(nome) {
-  return nome.replace(/[.#$[\]/]/g, '_');
-}
+let tableData=[], sortKey='projecao_pct';
 
-function buildRanking() {
-  const duT = ciclo.duTotal || 0;
-  const duTr = ciclo.duTrabalhados || 0;
-  const fator = (duTr > 0 && duT > 0) ? duT / duTr : 1;
+function fmt(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtPct(v){return v.toFixed(1)+'%';}
+function getColor(pct){if(pct===null||pct===undefined)return '#4a6080';if(pct>=100)return '#4cba80';if(pct>=70)return '#e8a030';return '#e07840';}
 
-  return Object.entries(metas)
-    .filter(([,m]) => m > 0)
-    .map(([nome, meta]) => {
-      const realizado = pagamentos[encodeNome(nome)] || 0;
-      const pctReal = meta > 0 ? (realizado / meta) * 100 : 0;
-      const projecao = duTr > 0 ? realizado * fator : realizado;
-      const pctProj = meta > 0 ? (projecao / meta) * 100 : 0;
-      return { nome, meta, realizado, pctReal, projecao, pctProj };
-    })
-    .sort((a, b) => b.pctProj - a.pctProj);
-}
-
-function iniciais(nome) {
-  const parts = nome.trim().split(' ');
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return nome.substring(0, 2).toUpperCase();
-}
-
-function moeda(v) {
-  return (v||0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function pctCls(v) {
-  return v >= 100 ? 'pct-green' : v >= 70 ? 'pct-gold' : 'pct-red';
-}
-function barCls(v) {
-  return v >= 100 ? 'bar-green' : v >= 70 ? 'bar-gold' : 'bar-red';
-}
-function rowCls(i) {
-  return i === 0 ? 'p1-row' : i === 1 ? 'p2-row' : i === 2 ? 'p3-row' : '';
-}
-
-function render() {
-  const ranking = buildRanking();
-  const tbody = document.getElementById('tbody');
-
-  // Header
-  const duT = ciclo.duTotal || 0;
-  const duTr = ciclo.duTrabalhados || 0;
-  const fator = (duTr > 0 && duT > 0) ? duT / duTr : 1;
-
-  const fmt = d => {
-    if (!d) return '--';
-    const [y,m,dd] = d.split('-');
-    return `${dd}/${m}/${y}`;
-  };
-  document.getElementById('h-ciclo').textContent = ciclo.inicio ? `${fmt(ciclo.inicio)} → ${fmt(ciclo.fim)}` : 'Ciclo --';
-  document.getElementById('h-du').textContent = `DU: ${duTr || '--'} / ${duT || '--'}`;
-
-  // Summary
-  const totalReal = ranking.reduce((s,r) => s + r.realizado, 0);
-  const totalMeta = ranking.reduce((s,r) => s + r.meta, 0);
-  const totalProj = ranking.reduce((s,r) => s + r.projecao, 0);
-  const pctReal = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-  const pctProj = totalMeta > 0 ? (totalProj / totalMeta) * 100 : 0;
-  const sumProjCls = pctProj >= 100 ? 'green' : pctProj >= 70 ? 'gold' : 'red';
-
-  document.getElementById('s-realizado').textContent = 'R$ ' + moeda(totalReal);
-  document.getElementById('s-meta').textContent = 'R$ ' + moeda(totalMeta);
-  document.getElementById('s-pct-real').textContent = pctReal.toFixed(1) + '%';
-  document.getElementById('s-proj').textContent = 'R$ ' + moeda(totalProj);
-  document.getElementById('s-proj').className = 'sum-value ' + sumProjCls;
-  document.getElementById('s-pct-proj').textContent = pctProj.toFixed(1) + '%';
-  document.getElementById('s-pct-proj').className = 'sum-value ' + sumProjCls;
-  document.getElementById('s-ops').textContent = ranking.length;
-
-  document.getElementById('last-update').textContent = 'Atualizado: ' + new Date().toLocaleString('pt-BR');
-
-  if (!ranking.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div><div class="empty-msg">Nenhum dado disponível. Aguarde a importação do arquivo analítico.</div></div></td></tr>`;
+onValue(ref(db,'credipar/ranking'), (snapshot) => {
+  const data = snapshot.val();
+  if (!data) {
+    document.getElementById('loading-msg').innerHTML='<i class="ti ti-info-circle"></i>Nenhum dado publicado ainda. Aguarde o administrador atualizar.';
     return;
   }
 
-  tbody.innerHTML = ranking.map((r, i) => {
-    const posCls = i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : 'p-rest';
-    const posNum = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}º`;
-    const barW = Math.min(r.pctProj, 100);
-    const pc = pctCls(r.pctProj);
-    const bc = barCls(r.pctProj);
+  const { meta, operadores, atualizadoEm } = data;
+  tableData = operadores;
 
-    return `<tr class="${rowCls(i)}">
-      <td><span class="pos ${posCls}">${posNum}</span></td>
-      <td>
-        <div class="op-cell">
-          <div class="op-avatar">${iniciais(r.nome)}</div>
-          <div class="op-name">${r.nome}</div>
-        </div>
-      </td>
-      <td>
-        <div class="val">R$ ${moeda(r.realizado)}</div>
-      </td>
-      <td>
-        <div class="val">R$ ${moeda(r.meta)}</div>
-      </td>
-      <td><span class="pct ${pctCls(r.pctReal)}">${r.pctReal.toFixed(1)}%</span></td>
-      <td>
-        <div class="val">R$ ${moeda(r.projecao)}</div>
-        <div class="val-dim" style="margin-top:4px">
-          <div class="bar-wrap"><div class="bar ${bc}" style="width:${barW}%"></div></div>
-        </div>
-      </td>
-      <td><span class="pct ${pc}">${r.pctProj.toFixed(1)}%</span></td>
-    </tr>`;
-  }).join('');
+  document.getElementById('period-label').textContent = meta.periodLabel;
+  const badge = document.getElementById('status-badge');
+  badge.textContent = 'Atualizado'; badge.className = 'dash-badge ok';
+
+  document.getElementById('m-com').textContent = fmt(operadores.reduce((s,r)=>s+r.com,0));
+  document.getElementById('m-rec').textContent = fmt(operadores.reduce((s,r)=>s+r.rec,0));
+  document.getElementById('m-ops').textContent = operadores.length;
+  document.getElementById('m-du').textContent = meta.duRest;
+  document.getElementById('m-du-sub').textContent = `de ${meta.duTotal} úteis no ciclo`;
+
+  if (atualizadoEm) {
+    const dt = new Date(atualizadoEm);
+    document.getElementById('update-info').textContent = `Última atualização: ${dt.toLocaleString('pt-BR')}`;
+  }
+
+  document.getElementById('metrics').style.display = 'grid';
+  document.getElementById('controls').style.display = 'flex';
+  document.getElementById('loading-msg').style.display = 'none';
+  document.getElementById('ranking-table').style.display = 'table';
+  renderTable();
+});
+
+window.sortBy = function(key) {
+  sortKey = key;
+  document.querySelectorAll('.pill[data-key]').forEach(b=>b.classList.toggle('active',b.dataset.key===key));
+  renderTable();
+};
+
+function renderTable() {
+  const sorted = [...tableData].sort((a,b) => {
+    if(sortKey==='nome') return a.nome.localeCompare(b.nome);
+    if(sortKey==='meta_pct') return (b.metaPct||0)-(a.metaPct||0);
+    if(sortKey==='comissao') return b.com-a.com;
+    return (b.projecaoPct||0)-(a.projecaoPct||0);
+  });
+  const tbody = document.getElementById('ranking-body');
+  tbody.innerHTML = '';
+  sorted.forEach((row,i) => {
+    const rank=i+1;
+    const rClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+    const barMeta=row.metaPct!=null?Math.min(row.metaPct,100):0;
+    const barProj=row.projecaoPct!=null?Math.min(row.projecaoPct,100):0;
+    const cMeta=getColor(row.metaPct), cProj=getColor(row.projecaoPct);
+    const dotC=row.projecaoPct>=100?'#4cba80':row.projecaoPct>=70?'#e8a030':'#e07840';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="rank-num ${rClass}">${rank}</span></td><td class="op-name">${row.nome}</td><td class="r" style="font-weight:600;color:#fff">${fmt(row.com)}</td><td class="r muted">${fmt(row.meta)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${barMeta}%;background:${cMeta}"></div></div><span class="bar-label" style="color:${cMeta}">${row.metaPct!=null?fmtPct(row.metaPct):'—'}</span></div></td><td class="r muted">${fmt(row.projecaoVal)}</td><td><div class="bar-wrap"><span class="dot" style="background:${dotC}"></span><div class="bar-bg"><div class="bar-fill" style="width:${barProj}%;background:${cProj}"></div></div><span class="bar-label" style="color:${cProj}">${row.projecaoPct!=null?fmtPct(row.projecaoPct):'—'}</span></div></td>`;
+    tbody.appendChild(tr);
+  });
 }
-
-// Reactive listeners
-onValue(ref(db, 'metas'), snap => {
-  if (snap.exists()) metas = snap.val();
-  render();
-});
-onValue(ref(db, 'pagamentos'), snap => {
-  pagamentos = snap.exists() ? snap.val() : {};
-  render();
-});
-onValue(ref(db, 'ciclo'), snap => {
-  ciclo = snap.exists() ? snap.val() : {};
-  render();
-});
-
-// Remove loading after first data
-setTimeout(() => {
-  document.getElementById('loading').classList.add('hidden');
-}, 1500);
 </script>
 </body>
 </html>

@@ -3,346 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CREDIPAR – Admin | Nexus</title>
+<title>Admin — Ranking CREDIPAR | Nexus</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-  :root {
-    --navy: #0d1b2a;
-    --navy2: #1b2e45;
-    --navy3: #243b55;
-    --accent: #1e90ff;
-    --accent2: #0a6edb;
-    --gold: #f0a500;
-    --green: #22c55e;
-    --red: #ef4444;
-    --text: #e2e8f0;
-    --text2: #94a3b8;
-    --border: rgba(255,255,255,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-
-  /* HEADER */
-  header {
-    background: var(--navy2);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px; position: sticky; top: 0; z-index: 100;
-  }
-  .logo { display: flex; align-items: center; gap: 12px; }
-  .logo-badge { background: var(--accent); color: #fff; font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 6px; letter-spacing: 1px; }
-  .logo-title { font-size: 15px; font-weight: 600; color: var(--text); }
-  .logo-sub { font-size: 11px; color: var(--text2); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .badge-admin { background: rgba(240,165,0,0.15); color: var(--gold); border: 1px solid rgba(240,165,0,0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-
-  /* MAIN */
-  main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-
-  /* SECTION TITLE */
-  .section-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; }
-
-  /* CARDS ROW */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-  .card { background: var(--navy2); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; }
-  .card-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
-  .card-value { font-size: 24px; font-weight: 700; }
-  .card-value.green { color: var(--green); }
-  .card-value.gold { color: var(--gold); }
-  .card-value.blue { color: var(--accent); }
-
-  /* PANEL */
-  .panel { background: var(--navy2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 2rem; }
-  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: .5rem; }
-  .panel-title { font-size: 15px; font-weight: 700; }
-
-  /* UPLOAD AREA */
-  .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  @media (max-width: 700px) { .upload-grid { grid-template-columns: 1fr; } }
-
-  .upload-card { background: var(--navy3); border: 2px dashed rgba(30,144,255,0.3); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: border-color .2s; }
-  .upload-card:hover { border-color: var(--accent); }
-  .upload-card input[type=file] { display: none; }
-  .upload-icon { font-size: 32px; margin-bottom: 8px; }
-  .upload-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .upload-sub { font-size: 12px; color: var(--text2); }
-
-  .upload-btn { display: inline-block; margin-top: 12px; background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
-  .upload-btn:hover { background: var(--accent2); }
-
-  .file-preview { margin-top: 10px; font-size: 12px; color: var(--green); min-height: 18px; }
-
-  /* CYCLE */
-  .cycle-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
-  .field-group { display: flex; flex-direction: column; gap: 6px; }
-  .field-group label { font-size: 12px; color: var(--text2); }
-  .field-group input { background: var(--navy3); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 13px; width: 180px; }
-  .field-group input:focus { outline: none; border-color: var(--accent); }
-
-  .btn { padding: 9px 22px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: .2s; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: var(--accent2); }
-  .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-  .btn-danger:hover { background: rgba(239,68,68,0.25); }
-  .btn-gold { background: rgba(240,165,0,0.15); color: var(--gold); border: 1px solid rgba(240,165,0,0.3); }
-  .btn-gold:hover { background: rgba(240,165,0,0.25); }
-
-  /* METAS TABLE */
-  .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-  .meta-item { background: var(--navy3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
-  .meta-name { font-size: 13px; font-weight: 500; }
-  .meta-val { font-size: 13px; color: var(--gold); font-weight: 700; }
-  .meta-input { background: var(--navy2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 13px; width: 90px; text-align: right; }
-  .meta-input:focus { outline: none; border-color: var(--accent); }
-
-  /* LOG TABLE */
-  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .log-table th { text-align: left; color: var(--text2); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
-  .log-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .log-table tr:last-child td { border-bottom: none; }
-
-  /* STATUS */
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
-  .dot-gold { background: var(--gold); }
-  .dot-red { background: var(--red); }
-
-  /* TOAST */
-  #toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--navy2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 14px 20px; border-radius: 10px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 9999; max-width: 320px; }
-  #toast.show { opacity: 1; }
-  #toast.success { border-left-color: var(--green); }
-  #toast.error { border-left-color: var(--red); }
-
-  /* PROGRESS BAR */
-  .progress-wrap { background: rgba(255,255,255,0.06); border-radius: 99px; height: 6px; overflow: hidden; }
-  .progress-bar { height: 100%; border-radius: 99px; background: var(--accent); transition: width .4s; }
-  .progress-bar.gold { background: var(--gold); }
-  .progress-bar.green { background: var(--green); }
-
-  /* UTILS */
-  .mt1 { margin-top: 1rem; }
-  .mt2 { margin-top: 1.5rem; }
-  .flex-gap { display: flex; gap: 10px; flex-wrap: wrap; }
-  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
-
-  /* RANKING PREVIEW */
-  .rank-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .rank-table th { text-align: left; color: var(--text2); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
-  .rank-table td { padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-  .rank-table tr:last-child td { border-bottom: none; }
-  .rank-pos { font-size: 16px; font-weight: 800; color: var(--text2); width: 30px; }
-  .rank-pos.p1 { color: #ffd700; }
-  .rank-pos.p2 { color: #c0c0c0; }
-  .rank-pos.p3 { color: #cd7f32; }
-  .op-name { font-weight: 600; font-size: 14px; }
-  .pct-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-  .pct-green { background: rgba(34,197,94,0.15); color: var(--green); }
-  .pct-gold { background: rgba(240,165,0,0.15); color: var(--gold); }
-  .pct-red { background: rgba(239,68,68,0.15); color: var(--red); }
-
-  /* LOADING */
-  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  #loading-overlay { position: fixed; inset: 0; background: rgba(13,27,42,0.85); z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
-  #loading-overlay p { font-size: 15px; color: var(--text2); }
-  .big-spinner { width: 48px; height: 48px; border-width: 4px; }
-
-  .hidden { display: none !important; }
-
-  /* CYCLE INFO */
-  .cycle-info { background: rgba(30,144,255,0.08); border: 1px solid rgba(30,144,255,0.2); border-radius: 10px; padding: 12px 16px; display: flex; gap: 2rem; flex-wrap: wrap; }
-  .cycle-info-item { font-size: 13px; }
-  .cycle-info-item span { color: var(--text2); }
-  .cycle-info-item strong { color: var(--accent); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy-900: #0a1628; --navy-800: #0f2044; --navy-700: #1a3260;
+  --navy-600: #1e3d7a; --navy-500: #2952a3; --navy-400: #3d6bc4;
+  --navy-300: #6b93d6; --navy-200: #a8c0e8;
+  --gold: #c9a84c; --silver: #8a9bb0; --bronze: #b07850;
+  --green: #4cba80; --amber: #e8a030; --warn: #e07840;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+html, body { min-height: 100vh; background: #060f1e; font-family: var(--font); color: #e2eaf4; }
+body { display: flex; flex-direction: column; align-items: center; padding: 24px 16px 48px; }
+.wrap { width: 100%; max-width: 1100px; }
+.nexus-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.nexus-logo { font-size: 13px; font-weight: 600; color: var(--navy-300); letter-spacing: 0.08em; text-transform: uppercase; }
+.nexus-logo span { color: var(--navy-400); font-weight: 400; }
+.admin-tag { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); text-transform: uppercase; letter-spacing: 0.06em; }
+.dash { background: var(--navy-900); border-radius: 16px; overflow: hidden; border: 1px solid var(--navy-800); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+.dash-header { background: var(--navy-800); padding: 20px 28px 18px; border-bottom: 1px solid var(--navy-700); display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.logo-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--navy-500); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dash-logo-wrap { display: flex; align-items: center; gap: 12px; }
+.dash-title { font-size: 16px; font-weight: 600; color: #fff; }
+.dash-sub { font-size: 12px; color: var(--navy-300); margin-top: 3px; }
+.dash-badge { font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 20px; background: var(--navy-700); color: var(--navy-200); border: 1px solid var(--navy-600); white-space: nowrap; align-self: center; }
+.dash-badge.ok { background: rgba(76,186,128,0.15); color: #4cba80; border-color: rgba(76,186,128,0.3); }
+.upload-section { padding: 18px 28px; border-bottom: 1px solid var(--navy-800); }
+.upload-label { font-size: 10px; font-weight: 600; color: var(--navy-400); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.upload-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.upload-slot { background: var(--navy-800); border: 1px solid var(--navy-700); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 7px; transition: border-color 0.2s; }
+.upload-slot.loaded { border-color: var(--navy-500); }
+.slot-label { font-size: 10px; font-weight: 600; color: var(--navy-300); text-transform: uppercase; letter-spacing: 0.06em; }
+.slot-name { font-size: 11px; color: var(--navy-400); min-height: 15px; }
+.slot-name.ok { color: var(--green); }
+.slot-btn { font-size: 12px; display: flex; align-items: center; gap: 5px; cursor: pointer; background: var(--navy-700); color: var(--navy-200); border: none; border-radius: 6px; padding: 6px 12px; width: 100%; justify-content: center; transition: background 0.15s; font-family: var(--font); }
+.slot-btn:hover { background: var(--navy-600); }
+.publish-bar { padding: 12px 28px; background: rgba(201,168,76,0.07); border-bottom: 1px solid rgba(201,168,76,0.15); display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.publish-bar p { font-size: 12px; color: var(--navy-300); }
+.publish-btn { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; background: var(--gold); color: #1a1000; border: none; border-radius: 8px; padding: 8px 18px; font-family: var(--font); transition: opacity 0.15s; }
+.publish-btn:hover { opacity: 0.85; }
+.publish-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--navy-800); }
+@media (max-width: 600px) { .metrics { grid-template-columns: repeat(2,1fr); } }
+.metric { background: var(--navy-900); padding: 18px 24px; }
+.metric-label { font-size: 10px; font-weight: 600; color: var(--navy-300); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+.metric-value { font-size: 22px; font-weight: 600; color: #fff; line-height: 1; }
+.metric-sub { font-size: 11px; color: var(--navy-400); margin-top: 5px; }
+.table-controls { padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: var(--navy-900); border-top: 1px solid var(--navy-800); border-bottom: 1px solid var(--navy-800); }
+.sort-pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pill { font-size: 11px; padding: 5px 14px; border-radius: 20px; cursor: pointer; background: transparent; color: var(--navy-300); border: 1px solid var(--navy-700); transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; font-family: var(--font); }
+.pill.active { background: var(--navy-600); color: #fff; border-color: var(--navy-500); }
+.pill:hover:not(.active) { border-color: var(--navy-500); color: var(--navy-200); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+thead { background: var(--navy-800); }
+thead th { font-size: 10px; font-weight: 600; color: var(--navy-300); text-transform: uppercase; letter-spacing: 0.07em; padding: 11px 18px; text-align: left; border-bottom: 1px solid var(--navy-700); white-space: nowrap; }
+thead th.r { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--navy-800); transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+tbody td { padding: 12px 18px; font-size: 13px; color: #e2eaf4; white-space: nowrap; }
+tbody td.r { text-align: right; }
+tbody td.muted { color: var(--navy-300); font-size: 12px; }
+.rank-num { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.r1 { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.5); }
+.r2 { background: rgba(138,155,176,0.15); color: var(--silver); border: 1px solid rgba(138,155,176,0.4); }
+.r3 { background: rgba(176,120,80,0.15); color: var(--bronze); border: 1px solid rgba(176,120,80,0.5); }
+.rn { background: var(--navy-800); color: var(--navy-300); border: 1px solid var(--navy-700); }
+.op-name { font-weight: 500; color: #fff; font-size: 13px; }
+.bar-wrap { display: flex; align-items: center; gap: 8px; }
+.bar-bg { flex: 1; height: 5px; border-radius: 3px; background: var(--navy-700); min-width: 60px; }
+.bar-fill { height: 5px; border-radius: 3px; }
+.bar-label { font-size: 12px; font-weight: 600; min-width: 44px; text-align: right; }
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.alert { background: rgba(176,120,80,0.15); border: 1px solid rgba(176,120,80,0.4); border-radius: 8px; padding: 10px 18px; font-size: 12px; color: #e8c090; margin: 14px 28px; display: none; }
+.empty { text-align: center; padding: 4rem; color: var(--navy-400); font-size: 14px; line-height: 1.8; }
+.empty i { font-size: 32px; display: block; margin-bottom: 12px; opacity: 0.4; }
+.footer { margin-top: 16px; font-size: 11px; color: var(--navy-600); text-align: center; }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <div class="nexus-bar">
+    <div class="nexus-logo">Nexus <span>/ Assessoria de Cobrança</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="admin-tag"><i class="ti ti-shield"></i> Administrador</span>
+      <div style="font-size:11px;color:var(--navy-600)" id="today-date"></div>
+    </div>
+  </div>
 
-<div id="loading-overlay">
-  <div class="spinner big-spinner"></div>
-  <p>Conectando ao Firebase…</p>
+  <div class="dash">
+    <div class="dash-header">
+      <div class="dash-logo-wrap">
+        <div class="logo-mark"><i class="ti ti-chart-bar" style="font-size:18px;color:#fff"></i></div>
+        <div>
+          <div class="dash-title">Ranking de operadores — CREDIPAR</div>
+          <div class="dash-sub" id="period-label">Nenhum arquivo carregado</div>
+        </div>
+      </div>
+      <span class="dash-badge" id="status-badge">Aguardando arquivos</span>
+    </div>
+
+    <div class="upload-section">
+      <div class="upload-label">Upload de arquivos</div>
+      <div class="upload-grid">
+        <div class="upload-slot" id="slot1">
+          <span class="slot-label">Pagamentos — Carteira 59</span>
+          <span class="slot-name" id="name-pag1">Nenhum arquivo selecionado</span>
+          <button class="slot-btn" onclick="document.getElementById('file-pag1').click()"><i class="ti ti-upload"></i> Selecionar arquivo</button>
+          <input type="file" id="file-pag1" accept=".xls,.xlsx" style="display:none">
+        </div>
+        <div class="upload-slot" id="slot2">
+          <span class="slot-label">Pagamentos — Carteira 69</span>
+          <span class="slot-name" id="name-pag2">Nenhum arquivo selecionado</span>
+          <button class="slot-btn" onclick="document.getElementById('file-pag2').click()"><i class="ti ti-upload"></i> Selecionar arquivo</button>
+          <input type="file" id="file-pag2" accept=".xls,.xlsx" style="display:none">
+        </div>
+        <div class="upload-slot" id="slot3">
+          <span class="slot-label">Metas dos operadores</span>
+          <span class="slot-name" id="name-meta">Nenhum arquivo selecionado</span>
+          <button class="slot-btn" onclick="document.getElementById('file-meta').click()"><i class="ti ti-upload"></i> Selecionar arquivo</button>
+          <input type="file" id="file-meta" accept=".xls,.xlsx" style="display:none">
+        </div>
+      </div>
+    </div>
+
+    <div class="publish-bar" id="publish-bar">
+      <p><i class="ti ti-info-circle"></i> Dados processados e prontos para publicar para a operação.</p>
+      <button class="publish-btn" id="publish-btn" onclick="publishToFirebase()">
+        <i class="ti ti-cloud-upload"></i> Publicar para operação
+      </button>
+    </div>
+
+    <div id="alert-box" class="alert"></div>
+
+    <div class="metrics" id="metrics" style="display:none">
+      <div class="metric"><div class="metric-label">Total comissão</div><div class="metric-value" id="m-com">—</div><div class="metric-sub">no ciclo</div></div>
+      <div class="metric"><div class="metric-label">Total recebido</div><div class="metric-value" id="m-rec">—</div><div class="metric-sub">no ciclo</div></div>
+      <div class="metric"><div class="metric-label">Operadores</div><div class="metric-value" id="m-ops">—</div><div class="metric-sub">com meta definida</div></div>
+      <div class="metric"><div class="metric-label">Dias úteis restantes</div><div class="metric-value" id="m-du">—</div><div class="metric-sub" id="m-du-sub">—</div></div>
+    </div>
+
+    <div class="table-controls" id="controls" style="display:none">
+      <div class="sort-pills">
+        <span style="font-size:11px;color:var(--navy-400)">Ordenar:</span>
+        <button class="pill active" data-key="projecao_pct" onclick="sortBy('projecao_pct')">% Projeção</button>
+        <button class="pill" data-key="meta_pct" onclick="sortBy('meta_pct')">% Realizado</button>
+        <button class="pill" data-key="comissao" onclick="sortBy('comissao')">Comissão</button>
+        <button class="pill" data-key="nome" onclick="sortBy('nome')">Nome</button>
+      </div>
+      <button class="pill" onclick="exportCSV()"><i class="ti ti-download"></i> Exportar CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="empty" id="empty-msg"><i class="ti ti-table-off"></i>Faça upload dos arquivos de pagamento e da planilha de metas<br>para visualizar o ranking.</div>
+      <table id="ranking-table" style="display:none">
+        <thead>
+          <tr>
+            <th style="width:48px">#</th>
+            <th>Operador</th>
+            <th class="r">Realizado</th>
+            <th class="r">Meta</th>
+            <th style="min-width:160px">% Realizado</th>
+            <th class="r">Projeção R$</th>
+            <th style="min-width:150px">% Projeção</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer">Nexus Assessoria de Cobrança · Dashboard CREDIPAR · Painel Administrativo</div>
 </div>
 
-<header>
-  <div class="logo">
-    <div class="logo-badge">NEXUS</div>
-    <div>
-      <div class="logo-title">Ranking CREDIPAR</div>
-      <div class="logo-sub">Painel Administrativo</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <span class="badge-admin">⚙ ADMIN</span>
-    <div id="fb-status" style="font-size:12px;color:var(--text2);">Conectando…</div>
-  </div>
-</header>
-
-<main>
-
-  <!-- CARDS RESUMO -->
-  <div class="section-title">Resumo do Ciclo Atual</div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-label">Ciclo Ativo</div>
-      <div class="card-value blue" id="card-ciclo">--</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Total Realizado</div>
-      <div class="card-value green" id="card-realizado">R$ --</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Meta Total da Equipe</div>
-      <div class="card-value gold" id="card-meta">R$ --</div>
-    </div>
-    <div class="card">
-      <div class="card-label">% Projeção Equipe</div>
-      <div class="card-value" id="card-proj">--%</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Dias Úteis Trabalhados</div>
-      <div class="card-value blue" id="card-du">-- / --</div>
-    </div>
-  </div>
-
-  <!-- CICLO E DIAS ÚTEIS -->
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">📅 Configuração do Ciclo</div>
-    </div>
-    <div class="cycle-row">
-      <div class="field-group">
-        <label>Início do Ciclo</label>
-        <input type="date" id="ciclo-inicio">
-      </div>
-      <div class="field-group">
-        <label>Fim do Ciclo</label>
-        <input type="date" id="ciclo-fim">
-      </div>
-      <div class="field-group">
-        <label>Dias Úteis Totais no Ciclo</label>
-        <input type="number" id="du-total" placeholder="Ex: 22" style="width:160px">
-      </div>
-      <div class="field-group">
-        <label>Dias Úteis Trabalhados Até Hoje</label>
-        <input type="number" id="du-trabalhados" placeholder="Ex: 10" style="width:200px">
-      </div>
-      <button class="btn btn-primary" onclick="salvarCiclo()">Salvar Ciclo</button>
-    </div>
-    <div class="mt1" id="ciclo-atual-info"></div>
-  </div>
-
-  <!-- UPLOAD DE ARQUIVO -->
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">📂 Importar Arquivo Analítico</div>
-      <div class="flex-gap">
-        <span style="font-size:12px;color:var(--text2);">Colunas necessárias: <strong>Operador · Dt. Pgto · Com.Ass · Valor Recebido</strong></span>
-      </div>
-    </div>
-    <div class="upload-grid">
-      <div class="upload-card" onclick="document.getElementById('file-59').click()">
-        <div class="upload-icon">📄</div>
-        <div class="upload-label">Carteira 59</div>
-        <div class="upload-sub">Arraste ou clique para selecionar o XLS/XLSX</div>
-        <input type="file" id="file-59" accept=".xls,.xlsx,.csv" onchange="previewFile('59',this)">
-        <div class="file-preview" id="preview-59"></div>
-        <button class="upload-btn" onclick="event.stopPropagation();processarArquivo('59')">Processar Carteira 59</button>
-      </div>
-      <div class="upload-card" onclick="document.getElementById('file-69').click()">
-        <div class="upload-icon">📄</div>
-        <div class="upload-label">Carteira 69</div>
-        <div class="upload-sub">Arraste ou clique para selecionar o XLS/XLSX</div>
-        <input type="file" id="file-69" accept=".xls,.xlsx,.csv" onchange="previewFile('69',this)">
-        <div class="file-preview" id="preview-69"></div>
-        <button class="upload-btn" onclick="event.stopPropagation();processarArquivo('69')">Processar Carteira 69</button>
-      </div>
-    </div>
-    <div class="mt1">
-      <button class="btn btn-primary" onclick="processarAmbas()">⚡ Processar Ambas as Carteiras</button>
-      <button class="btn btn-danger" style="margin-left:8px" onclick="limparDadosCiclo()">🗑 Limpar Dados do Ciclo</button>
-    </div>
-    <div id="import-log" class="mt1" style="font-size:13px;color:var(--text2);"></div>
-  </div>
-
-  <!-- METAS DOS OPERADORES -->
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">🎯 Metas dos Operadores</div>
-      <div class="flex-gap">
-        <button class="btn btn-gold" onclick="salvarMetas()">💾 Salvar Metas</button>
-      </div>
-    </div>
-    <div class="meta-grid" id="meta-grid">
-      <!-- preenchido via JS -->
-    </div>
-    <div class="mt1">
-      <button class="btn btn-primary" onclick="adicionarOperador()">+ Adicionar Operador</button>
-    </div>
-  </div>
-
-  <!-- RANKING PREVIEW -->
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">🏆 Preview do Ranking (ordem por % Projeção)</div>
-      <button class="btn btn-primary" onclick="carregarRanking()">🔄 Atualizar</button>
-    </div>
-    <div style="overflow-x:auto">
-      <table class="rank-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Operador</th>
-            <th>Realizado (Com.Ass)</th>
-            <th>Meta</th>
-            <th>% Realizado</th>
-            <th>Projeção R$</th>
-            <th>% Projeção</th>
-          </tr>
-        </thead>
-        <tbody id="ranking-body">
-          <tr><td colspan="7" style="text-align:center;color:var(--text2);padding:2rem">Carregando…</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- LOG DE IMPORTAÇÕES -->
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">📋 Histórico de Importações</div>
-      <button class="btn btn-danger" onclick="limparLog()">Limpar Log</button>
-    </div>
-    <div style="overflow-x:auto">
-      <table class="log-table">
-        <thead>
-          <tr>
-            <th>Data/Hora</th>
-            <th>Carteira</th>
-            <th>Registros</th>
-            <th>Operadores</th>
-            <th>Total Com.Ass</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="log-body">
-          <tr><td colspan="6" style="text-align:center;color:var(--text2);padding:1.5rem">Nenhum registro</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</main>
-
-<div id="toast"></div>
-
-<!-- SheetJS para leitura de XLS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBLmm1W-8bxbsG1SDMqzJcG_bJDKIG8Aq8",
@@ -357,346 +196,84 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ─── Operadores com meta ──────────────────────────────────────────────
-const OPERADORES_PADRAO = [
-  { nome: "CAMILE DE LIMA",                          meta: 3500 },
-  { nome: "DANILLA SILVA MACEDO",                    meta: 7000 },
-  { nome: "EDUARDA PEREIRA VIEIRA",                  meta: 7000 },
-  { nome: "GISELLE MARLENE DA SIVA",                 meta: 7000 },
-  { nome: "JOANA LARISSA PEREIRA ALMIRANTE BARROS",  meta: 7000 },
-  { nome: "KAHENA KELLY DE OLIVEIRA CABRAL",         meta: 3500 },
-  { nome: "KARLA ORESTINA MARQUES DA ROSA",          meta: 3500 },
-  { nome: "LIZ DANIELLE DOS SANTOS SOUZA",           meta: 7000 },
-  { nome: "MARCELO KAUA SANTOS ALVES DA SILVA",      meta: 7000 },
-  { nome: "MARILIA GABRIELA COSTA",                  meta: 7000 },
-  { nome: "MERYELY M",                               meta: 7000 },
-  { nome: "TALITHA CAMBRAIA PINTO",                  meta: 7000 },
-  { nome: "ZEUS EMMANUEL MEJIA CASTELLANO",          meta: 3500 },
-];
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 
-let metas = {}; // { NOME: meta_valor }
-let ciclo = {};
-let dadosPagamentos = {}; // { NOME: valor_comass }
-let duTotal = 0, duTrabalhados = 0;
-let logImport = [];
-let arquivos = { '59': null, '69': null };
+let dadosPag1=null,dadosPag2=null,dadosMetas=null,sortKey='projecao_pct',tableData=[],metaGlobal={};
 
-// ─── Funções globais expostas ─────────────────────────────────────────
-window.previewFile = (cart, input) => {
-  arquivos[cart] = input.files[0];
-  document.getElementById('preview-' + cart).textContent = input.files[0]?.name || '';
+const FERIADOS=['2026-01-01','2026-04-03','2026-04-05','2026-04-21','2026-05-01','2026-06-04','2026-09-07','2026-10-12','2026-11-02','2026-11-15','2026-11-20','2026-12-25','2027-01-01','2027-04-02','2027-04-04','2027-04-21','2027-05-01','2027-05-20','2027-09-07','2027-10-12','2027-11-02','2027-11-15','2027-11-20','2027-12-25'];
+function isFeriado(d){return FERIADOS.includes(d.toISOString().slice(0,10));}
+function isDiaUtil(d){const w=d.getDay();return w!==0&&w!==6&&!isFeriado(d);}
+function diasUteisEntre(s,e){let c=0,d=new Date(s);while(d<=e){if(isDiaUtil(d))c++;d.setDate(d.getDate()+1);}return c;}
+function parseDateVal(v){if(!v)return null;if(v instanceof Date)return new Date(v.getFullYear(),v.getMonth(),v.getDate());if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400000));return new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());}if(typeof v==='string'){const p=v.split(/[\/\-]/);if(p.length===3)return p[2].length===4?new Date(+p[2],+p[1]-1,+p[0]):new Date(+p[0],+p[1]-1,+p[2]);}return null;}
+function parseXLS(buffer){const wb=XLSX.read(buffer,{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});let hRow=-1;for(let i=0;i<rows.length;i++){if(rows[i]&&rows[i].some(c=>typeof c==='string'&&c.includes('Operador'))){hRow=i;break;}}if(hRow<0)throw new Error('Coluna "Operador" não encontrada.');const h=rows[hRow].map(c=>c?String(c).trim():'');const iOp=h.indexOf('Operador'),iDt=h.findIndex(c=>c.includes('Dt. Pgto')||c.includes('Dt.Pgto'));const iCom=h.findIndex(c=>c.includes('Com.Ass')),iRec=h.findIndex(c=>c.includes('Valor Recebido'));if(iOp<0||iDt<0||iCom<0)throw new Error('Colunas necessárias não encontradas.');const data=[];for(let i=hRow+1;i<rows.length;i++){const r=rows[i];if(!r||!r[iOp])continue;const dt=parseDateVal(r[iDt]);if(!dt)continue;data.push({operador:String(r[iOp]).trim(),dt,com:parseFloat(r[iCom])||0,rec:parseFloat(r[iRec])||0});}return data;}
+function readFile(file,onDone,onErr){const reader=new FileReader();reader.onload=ev=>{try{onDone(ev.target.result);}catch(e){onErr(e.message);}};reader.readAsArrayBuffer(file);}
+function setupPagUpload(inputId,nameId,slotId,setter){document.getElementById(inputId).addEventListener('change',function(e){const f=e.target.files[0];if(!f)return;readFile(f,buf=>{setter(parseXLS(buf));const el=document.getElementById(nameId);el.textContent='✓ '+f.name;el.className='slot-name ok';document.getElementById(slotId).classList.add('loaded');hideAlert();tryRender();},msg=>showAlert('Erro: '+msg));});}
+setupPagUpload('file-pag1','name-pag1','slot1',d=>dadosPag1=d);
+setupPagUpload('file-pag2','name-pag2','slot2',d=>dadosPag2=d);
+document.getElementById('file-meta').addEventListener('change',function(e){const f=e.target.files[0];if(!f)return;readFile(f,buf=>{const wb=XLSX.read(buf,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});const metas={};for(const r of rows){if(!r||!r[0])continue;const n=String(r[0]).trim(),m=parseFloat(r[1])||0;if(n&&m)metas[n]=m;}dadosMetas=metas;const el=document.getElementById('name-meta');el.textContent='✓ '+f.name;el.className='slot-name ok';document.getElementById('slot3').classList.add('loaded');hideAlert();tryRender();},msg=>showAlert('Erro no arquivo de metas: '+msg));});
+
+function showAlert(msg){const el=document.getElementById('alert-box');el.textContent=msg;el.style.display='block';}
+function hideAlert(){document.getElementById('alert-box').style.display='none';}
+function fmt(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtPct(v){return v.toFixed(1)+'%';}
+function getColor(pct){if(pct===null)return '#4a6080';if(pct>=100)return '#4cba80';if(pct>=70)return '#e8a030';return '#e07840';}
+
+function tryRender(){
+  const allPag=[...(dadosPag1||[]),...(dadosPag2||[])];
+  if(!allPag.length||!dadosMetas)return;
+  const datas=allPag.map(d=>d.dt).filter(Boolean).sort((a,b)=>a-b);
+  const ultimo=datas[datas.length-1];
+  const mes=ultimo.getMonth(),ano=ultimo.getFullYear();
+  const prevMes=mes===0?11:mes-1,prevAno=mes===0?ano-1:ano;
+  const inicioCiclo=new Date(prevAno,prevMes,26),fimCiclo=new Date(ano,mes,25);
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const duTotal=diasUteisEntre(inicioCiclo,fimCiclo);
+  const duTrab=diasUteisEntre(inicioCiclo,hoje<fimCiclo?hoje:fimCiclo);
+  const duRest=Math.max(0,duTotal-duTrab);
+  const MM=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const carteiraLabel=[dadosPag1?'Cart. 59':'',dadosPag2?'Cart. 69':''].filter(Boolean).join(' + ');
+  document.getElementById('period-label').textContent=`Ciclo ${inicioCiclo.getDate()}/${MM[inicioCiclo.getMonth()]} – ${fimCiclo.getDate()}/${MM[fimCiclo.getMonth()]}/${fimCiclo.getFullYear()} · ${carteiraLabel}`;
+  const ops={};
+  for(const row of allPag){if(!row.operador||!dadosMetas[row.operador])continue;if(!ops[row.operador])ops[row.operador]={com:0,rec:0};ops[row.operador].com+=row.com;ops[row.operador].rec+=row.rec;}
+  tableData=Object.entries(ops).map(([nome,v])=>{const meta=dadosMetas[nome];const metaPct=meta>0?(v.com/meta*100):null;const projVal=duTrab>0?(v.com/duTrab*duTotal):0;const projPct=meta>0?(projVal/meta*100):null;return {nome,com:v.com,rec:v.rec,meta,metaPct,projecaoVal:projVal,projecaoPct:projPct};});
+  metaGlobal={duTotal,duTrab,duRest,inicioCiclo:inicioCiclo.toISOString(),fimCiclo:fimCiclo.toISOString(),carteiraLabel,periodLabel:document.getElementById('period-label').textContent,atualizadoEm:new Date().toISOString()};
+  document.getElementById('m-com').textContent=fmt(tableData.reduce((s,r)=>s+r.com,0));
+  document.getElementById('m-rec').textContent=fmt(tableData.reduce((s,r)=>s+r.rec,0));
+  document.getElementById('m-ops').textContent=tableData.length;
+  document.getElementById('m-du').textContent=duRest;
+  document.getElementById('m-du-sub').textContent=`de ${duTotal} úteis no ciclo`;
+  const badge=document.getElementById('status-badge');badge.textContent='Atualizado';badge.className='dash-badge ok';
+  document.getElementById('metrics').style.display='grid';
+  document.getElementById('controls').style.display='flex';
+  document.getElementById('publish-bar').style.display='flex';
+  document.getElementById('empty-msg').style.display='none';
+  document.getElementById('ranking-table').style.display='table';
+  renderTable();
+}
+
+window.publishToFirebase = async function() {
+  const btn=document.getElementById('publish-btn');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader ti-spin"></i> Publicando...';
+  try {
+    const payload={meta:metaGlobal,operadores:tableData,atualizadoEm:new Date().toISOString()};
+    await set(ref(db,'credipar/ranking'),payload);
+    btn.innerHTML='<i class="ti ti-check"></i> Publicado!';
+    setTimeout(()=>{btn.disabled=false;btn.innerHTML='<i class="ti ti-cloud-upload"></i> Publicar para operação';},3000);
+  } catch(e) {
+    showAlert('Erro ao publicar: '+e.message);
+    btn.disabled=false;btn.innerHTML='<i class="ti ti-cloud-upload"></i> Publicar para operação';
+  }
 };
 
-window.processarArquivo = (cart) => processar([cart]);
-window.processarAmbas = () => processar(['59', '69']);
+window.sortBy = function(key){sortKey=key;document.querySelectorAll('.pill[data-key]').forEach(b=>b.classList.toggle('active',b.dataset.key===key));renderTable();};
 
-window.salvarCiclo = salvarCiclo;
-window.salvarMetas = salvarMetas;
-window.carregarRanking = renderRanking;
-window.limparDadosCiclo = limparDadosCiclo;
-window.limparLog = limparLog;
-window.adicionarOperador = adicionarOperador;
-
-// ─── INIT ─────────────────────────────────────────────────────────────
-async function init() {
-  try {
-    await carregarTudo();
-    document.getElementById('loading-overlay').classList.add('hidden');
-    document.getElementById('fb-status').innerHTML = '<span class="status-dot dot-green"></span>Conectado';
-    toast('Firebase conectado!', 'success');
-  } catch(e) {
-    document.getElementById('loading-overlay').classList.add('hidden');
-    document.getElementById('fb-status').innerHTML = '<span class="status-dot dot-red"></span>Erro';
-    toast('Erro ao conectar: ' + e.message, 'error');
-  }
+function renderTable(){
+  const sorted=[...tableData].sort((a,b)=>{if(sortKey==='nome')return a.nome.localeCompare(b.nome);if(sortKey==='meta_pct')return (b.metaPct||0)-(a.metaPct||0);if(sortKey==='comissao')return b.com-a.com;return (b.projecaoPct||0)-(a.projecaoPct||0);});
+  const tbody=document.getElementById('ranking-body');tbody.innerHTML='';
+  sorted.forEach((row,i)=>{const rank=i+1;const rClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';const barMeta=row.metaPct!==null?Math.min(row.metaPct,100):0;const barProj=row.projecaoPct!==null?Math.min(row.projecaoPct,100):0;const cMeta=getColor(row.metaPct),cProj=getColor(row.projecaoPct);const dotC=row.projecaoPct>=100?'#4cba80':row.projecaoPct>=70?'#e8a030':'#e07840';const tr=document.createElement('tr');tr.innerHTML=`<td><span class="rank-num ${rClass}">${rank}</span></td><td class="op-name">${row.nome}</td><td class="r" style="font-weight:600;color:#fff">${fmt(row.com)}</td><td class="r muted">${fmt(row.meta)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${barMeta}%;background:${cMeta}"></div></div><span class="bar-label" style="color:${cMeta}">${row.metaPct!==null?fmtPct(row.metaPct):'—'}</span></div></td><td class="r muted">${fmt(row.projecaoVal)}</td><td><div class="bar-wrap"><span class="dot" style="background:${dotC}"></span><div class="bar-bg"><div class="bar-fill" style="width:${barProj}%;background:${cProj}"></div></div><span class="bar-label" style="color:${cProj}">${row.projecaoPct!==null?fmtPct(row.projecaoPct):'—'}</span></div></td>`;tbody.appendChild(tr);});
 }
 
-async function carregarTudo() {
-  // Metas
-  const snapMetas = await get(ref(db, 'metas'));
-  if (snapMetas.exists()) {
-    metas = snapMetas.val();
-  } else {
-    OPERADORES_PADRAO.forEach(o => metas[o.nome] = o.meta);
-    await set(ref(db, 'metas'), metas);
-  }
-  renderMetas();
-
-  // Ciclo
-  const snapCiclo = await get(ref(db, 'ciclo'));
-  if (snapCiclo.exists()) {
-    ciclo = snapCiclo.val();
-    document.getElementById('ciclo-inicio').value = ciclo.inicio || '';
-    document.getElementById('ciclo-fim').value = ciclo.fim || '';
-    document.getElementById('du-total').value = ciclo.duTotal || '';
-    document.getElementById('du-trabalhados').value = ciclo.duTrabalhados || '';
-    duTotal = ciclo.duTotal || 0;
-    duTrabalhados = ciclo.duTrabalhados || 0;
-    atualizarCicloInfo();
-  }
-
-  // Pagamentos
-  const snapPgto = await get(ref(db, 'pagamentos'));
-  if (snapPgto.exists()) dadosPagamentos = snapPgto.val();
-
-  // Log
-  const snapLog = await get(ref(db, 'log_importacoes'));
-  if (snapLog.exists()) {
-    logImport = Object.values(snapLog.val());
-    renderLog();
-  }
-
-  renderCards();
-  renderRanking();
-}
-
-// ─── CICLO ────────────────────────────────────────────────────────────
-async function salvarCiclo() {
-  const inicio = document.getElementById('ciclo-inicio').value;
-  const fim = document.getElementById('ciclo-fim').value;
-  duTotal = parseInt(document.getElementById('du-total').value) || 0;
-  duTrabalhados = parseInt(document.getElementById('du-trabalhados').value) || 0;
-
-  if (!inicio || !fim) { toast('Informe as datas do ciclo', 'error'); return; }
-
-  ciclo = { inicio, fim, duTotal, duTrabalhados };
-  await set(ref(db, 'ciclo'), ciclo);
-  atualizarCicloInfo();
-  renderCards();
-  renderRanking();
-  toast('Ciclo salvo!', 'success');
-}
-
-function atualizarCicloInfo() {
-  const el = document.getElementById('ciclo-atual-info');
-  if (!ciclo.inicio) { el.innerHTML = ''; return; }
-  el.innerHTML = `
-    <div class="cycle-info">
-      <div class="cycle-info-item"><span>Período:</span> <strong>${fmt(ciclo.inicio)} → ${fmt(ciclo.fim)}</strong></div>
-      <div class="cycle-info-item"><span>Dias úteis totais:</span> <strong>${ciclo.duTotal || '--'}</strong></div>
-      <div class="cycle-info-item"><span>Dias trabalhados:</span> <strong>${ciclo.duTrabalhados || '--'}</strong></div>
-      <div class="cycle-info-item"><span>Fator projeção:</span> <strong>${ciclo.duTrabalhados && ciclo.duTotal ? (ciclo.duTotal/ciclo.duTrabalhados).toFixed(2)+'x' : '--'}</strong></div>
-    </div>`;
-}
-
-function fmt(d) {
-  if (!d) return '--';
-  const [y,m,dd] = d.split('-');
-  return `${dd}/${m}/${y}`;
-}
-
-// ─── METAS ────────────────────────────────────────────────────────────
-function renderMetas() {
-  const grid = document.getElementById('meta-grid');
-  grid.innerHTML = '';
-  Object.entries(metas).forEach(([nome, val]) => {
-    const div = document.createElement('div');
-    div.className = 'meta-item';
-    div.innerHTML = `
-      <div class="meta-name">${nome}</div>
-      <input class="meta-input" type="number" data-nome="${nome}" value="${val}" min="0">
-    `;
-    grid.appendChild(div);
-  });
-}
-
-function adicionarOperador() {
-  const nome = prompt('Nome do operador (em maiúsculas):');
-  if (!nome) return;
-  const meta = parseFloat(prompt('Meta mensal (R$):') || '0');
-  metas[nome.toUpperCase()] = meta;
-  renderMetas();
-  toast('Operador adicionado. Clique em Salvar Metas.', 'success');
-}
-
-async function salvarMetas() {
-  document.querySelectorAll('.meta-input').forEach(inp => {
-    metas[inp.dataset.nome] = parseFloat(inp.value) || 0;
-  });
-  await set(ref(db, 'metas'), metas);
-  renderCards();
-  renderRanking();
-  toast('Metas salvas!', 'success');
-}
-
-// ─── PROCESSAR ARQUIVO ───────────────────────────────────────────────
-async function processar(carteiras) {
-  for (const cart of carteiras) {
-    const file = arquivos[cart];
-    if (!file) { toast(`Selecione o arquivo da Carteira ${cart}`, 'error'); continue; }
-
-    const logEl = document.getElementById('import-log');
-    logEl.textContent = `Processando Carteira ${cart}…`;
-
-    try {
-      const buf = await file.arrayBuffer();
-      const wb = XLSX.read(buf, { type: 'array' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-
-      // Detectar coluna Operador e Com.Ass (case-insensitive)
-      const keys = Object.keys(rows[0] || {});
-      const colOp  = keys.find(k => k.toLowerCase().includes('operador'));
-      const colCom = keys.find(k => k.toLowerCase().replace('.','').replace(' ','') === 'comass' || k.toLowerCase().includes('com.ass') || k.toLowerCase().includes('comass'));
-
-      if (!colOp || !colCom) {
-        toast(`Carteira ${cart}: Colunas "Operador" ou "Com.Ass" não encontradas`, 'error');
-        logEl.textContent = `Erro: colunas não encontradas. Colunas presentes: ${keys.join(', ')}`;
-        continue;
-      }
-
-      // Agrupa por operador
-      const totalPorOp = {};
-      let totalComAss = 0;
-      rows.forEach(row => {
-        const op = String(row[colOp] || '').trim().toUpperCase();
-        const val = parseFloat(String(row[colCom]).replace(',','.')) || 0;
-        if (op) {
-          totalPorOp[op] = (totalPorOp[op] || 0) + val;
-          totalComAss += val;
-        }
-      });
-
-      // Atualiza no Firebase — soma com o que já existe
-      for (const [op, val] of Object.entries(totalPorOp)) {
-        const snapAtual = await get(ref(db, `pagamentos/${encodeNome(op)}`));
-        const atual = snapAtual.exists() ? snapAtual.val() : 0;
-        await set(ref(db, `pagamentos/${encodeNome(op)}`), atual + val);
-        dadosPagamentos[encodeNome(op)] = (dadosPagamentos[encodeNome(op)] || 0) + val;
-      }
-
-      // Registra log
-      const entrada = {
-        ts: new Date().toISOString(),
-        carteira: cart,
-        registros: rows.length,
-        operadores: Object.keys(totalPorOp).length,
-        totalComAss: totalComAss.toFixed(2)
-      };
-      await push(ref(db, 'log_importacoes'), entrada);
-      logImport.push(entrada);
-      renderLog();
-
-      logEl.textContent = `✅ Carteira ${cart} processada — ${rows.length} registros, ${Object.keys(totalPorOp).length} operadores, R$ ${moeda(totalComAss)}`;
-      toast(`Carteira ${cart} importada com sucesso!`, 'success');
-
-    } catch(e) {
-      toast(`Erro ao processar Carteira ${cart}: ${e.message}`, 'error');
-      document.getElementById('import-log').textContent = 'Erro: ' + e.message;
-    }
-  }
-
-  renderCards();
-  renderRanking();
-}
-
-function encodeNome(nome) {
-  return nome.replace(/[.#$[\]/]/g, '_');
-}
-function decodeNome(enc) {
-  // chave = nome já limpo, o encode só troca chars proibidos
-  return Object.keys(metas).find(k => encodeNome(k) === enc) || enc;
-}
-
-// ─── LIMPAR DADOS ─────────────────────────────────────────────────────
-async function limparDadosCiclo() {
-  if (!confirm('Tem certeza? Isso apaga todos os dados de pagamento do ciclo atual.')) return;
-  await remove(ref(db, 'pagamentos'));
-  dadosPagamentos = {};
-  renderCards();
-  renderRanking();
-  toast('Dados do ciclo limpos!', 'success');
-}
-
-async function limparLog() {
-  if (!confirm('Limpar histórico de importações?')) return;
-  await remove(ref(db, 'log_importacoes'));
-  logImport = [];
-  renderLog();
-}
-
-// ─── RENDER ───────────────────────────────────────────────────────────
-function buildRanking() {
-  const fator = (duTrabalhados > 0 && duTotal > 0) ? duTotal / duTrabalhados : 1;
-
-  return Object.entries(metas)
-    .map(([nome, meta]) => {
-      const realizado = dadosPagamentos[encodeNome(nome)] || 0;
-      const pctRealizado = meta > 0 ? (realizado / meta) * 100 : 0;
-      const projecao = realizado * fator;
-      const pctProjecao = meta > 0 ? (projecao / meta) * 100 : 0;
-      return { nome, meta, realizado, pctRealizado, projecao, pctProjecao };
-    })
-    .sort((a, b) => b.pctProjecao - a.pctProjecao);
-}
-
-function renderRanking() {
-  const ranking = buildRanking();
-  const tbody = document.getElementById('ranking-body');
-  tbody.innerHTML = '';
-  ranking.forEach((r, i) => {
-    const cls = r.pctProjecao >= 100 ? 'pct-green' : r.pctProjecao >= 70 ? 'pct-gold' : 'pct-red';
-    const posCls = i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
-    tbody.innerHTML += `
-      <tr>
-        <td><span class="rank-pos ${posCls}">${i+1}º</span></td>
-        <td><span class="op-name">${r.nome}</span></td>
-        <td>R$ ${moeda(r.realizado)}</td>
-        <td>R$ ${moeda(r.meta)}</td>
-        <td><span class="pct-badge ${cls}">${r.pctRealizado.toFixed(1)}%</span></td>
-        <td>R$ ${moeda(r.projecao)}</td>
-        <td><span class="pct-badge ${cls}">${r.pctProjecao.toFixed(1)}%</span></td>
-      </tr>`;
-  });
-}
-
-function renderCards() {
-  const ranking = buildRanking();
-  const totalReal = ranking.reduce((s,r) => s + r.realizado, 0);
-  const totalMeta = ranking.reduce((s,r) => s + r.meta, 0);
-  const fator = (duTrabalhados > 0 && duTotal > 0) ? duTotal / duTrabalhados : 1;
-  const pctProj = totalMeta > 0 ? ((totalReal * fator) / totalMeta) * 100 : 0;
-  const cls = pctProj >= 100 ? 'green' : pctProj >= 70 ? 'gold' : 'red';
-
-  document.getElementById('card-ciclo').textContent = ciclo.inicio ? `${fmt(ciclo.inicio)} → ${fmt(ciclo.fim)}` : '--';
-  document.getElementById('card-realizado').textContent = 'R$ ' + moeda(totalReal);
-  document.getElementById('card-meta').textContent = 'R$ ' + moeda(totalMeta);
-  document.getElementById('card-proj').textContent = pctProj.toFixed(1) + '%';
-  document.getElementById('card-proj').className = 'card-value ' + cls;
-  document.getElementById('card-du').textContent = `${duTrabalhados || '--'} / ${duTotal || '--'}`;
-}
-
-function renderLog() {
-  const tbody = document.getElementById('log-body');
-  if (!logImport.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:1.5rem">Nenhum registro</td></tr>';
-    return;
-  }
-  tbody.innerHTML = [...logImport].reverse().map(l => `
-    <tr>
-      <td>${new Date(l.ts).toLocaleString('pt-BR')}</td>
-      <td>Carteira ${l.carteira}</td>
-      <td>${l.registros}</td>
-      <td>${l.operadores}</td>
-      <td>R$ ${moeda(parseFloat(l.totalComAss))}</td>
-      <td><span class="status-dot dot-green"></span>OK</td>
-    </tr>`).join('');
-}
-
-// ─── UTILS ────────────────────────────────────────────────────────────
-function moeda(v) {
-  return (v||0).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
-}
-
-function toast(msg, tipo='success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show ' + tipo;
-  setTimeout(() => t.className = '', 3500);
-}
-
-// ─── START ────────────────────────────────────────────────────────────
-init();
+window.exportCSV = function(){if(!tableData.length)return;const sorted=[...tableData].sort((a,b)=>(b.projecaoPct||0)-(a.projecaoPct||0));const rows=[['Rank','Operador','Realizado R$','Meta R$','% Realizado','Projeção R$','% Projeção']];sorted.forEach((r,i)=>rows.push([i+1,r.nome,r.com.toFixed(2),r.meta.toFixed(2),r.metaPct!==null?fmtPct(r.metaPct):'',r.projecaoVal.toFixed(2),r.projecaoPct!==null?fmtPct(r.projecaoPct):'']));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8;'}));a.download='ranking_credipar.csv';a.click();};
 </script>
 </body>
 </html>
