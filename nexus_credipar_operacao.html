@@ -21,7 +21,27 @@ body { display: flex; flex-direction: column; align-items: center; padding: 24px
 .nexus-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .nexus-logo { font-size: 13px; font-weight: 600; color: var(--navy-300); letter-spacing: 0.08em; text-transform: uppercase; }
 .nexus-logo span { color: var(--navy-400); font-weight: 400; }
-.dash { background: var(--navy-900); border-radius: 16px; overflow: hidden; border: 1px solid var(--navy-800); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+
+/* ABAS */
+.tabs-bar { display: flex; gap: 4px; margin-bottom: 0; overflow-x: auto; padding-bottom: 0; }
+.tab-btn {
+  font-size: 12px; font-weight: 600; padding: 9px 18px;
+  border-radius: 10px 10px 0 0; cursor: pointer;
+  background: var(--navy-800); color: var(--navy-300);
+  border: 1px solid var(--navy-700); border-bottom: none;
+  white-space: nowrap; font-family: var(--font);
+  transition: all 0.15s;
+}
+.tab-btn:hover:not(.active) { color: var(--navy-200); background: var(--navy-700); }
+.tab-btn.active { background: var(--navy-900); color: #fff; border-color: var(--navy-700); border-bottom: 1px solid var(--navy-900); margin-bottom: -1px; z-index: 1; }
+.tab-btn.tab-hist { color: var(--gold); }
+.tab-btn.tab-hist.active { color: var(--gold); }
+
+/* DASH */
+.dash { background: var(--navy-900); border-radius: 0 16px 16px 16px; overflow: hidden; border: 1px solid var(--navy-800); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
 .dash-header { background: var(--navy-800); padding: 20px 28px 18px; border-bottom: 1px solid var(--navy-700); display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 .logo-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--navy-500); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .dash-logo-wrap { display: flex; align-items: center; gap: 12px; }
@@ -29,6 +49,7 @@ body { display: flex; flex-direction: column; align-items: center; padding: 24px
 .dash-sub { font-size: 12px; color: var(--navy-300); margin-top: 3px; }
 .dash-badge { font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 20px; background: var(--navy-700); color: var(--navy-200); border: 1px solid var(--navy-600); white-space: nowrap; align-self: center; }
 .dash-badge.ok { background: rgba(76,186,128,0.15); color: #4cba80; border-color: rgba(76,186,128,0.3); }
+.dash-badge.hist { background: rgba(201,168,76,0.15); color: var(--gold); border-color: rgba(201,168,76,0.3); }
 .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--navy-800); }
 @media (max-width: 600px) { .metrics { grid-template-columns: repeat(2,1fr); } }
 .metric { background: var(--navy-900); padding: 18px 24px; }
@@ -66,6 +87,10 @@ tbody td.muted { color: var(--navy-300); font-size: 12px; }
 .loading i { font-size: 32px; display: block; margin-bottom: 12px; opacity: 0.4; }
 .update-info { font-size: 11px; color: var(--navy-500); padding: 10px 28px; border-top: 1px solid var(--navy-800); text-align: right; }
 .footer { margin-top: 16px; font-size: 11px; color: var(--navy-600); text-align: center; }
+
+/* HISTÓRICO EMPTY */
+.hist-empty { text-align: center; padding: 4rem; color: var(--navy-400); font-size: 14px; line-height: 1.8; }
+.hist-empty i { font-size: 32px; display: block; margin-bottom: 12px; opacity: 0.4; }
 </style>
 </head>
 <body>
@@ -75,60 +100,76 @@ tbody td.muted { color: var(--navy-300); font-size: 12px; }
     <div style="font-size:11px;color:var(--navy-600)" id="today-date"></div>
   </div>
 
+  <!-- ABAS -->
+  <div class="tabs-bar" id="tabs-bar">
+    <button class="tab-btn active" data-tab="atual" onclick="trocarAba('atual')">
+      <i class="ti ti-chart-bar"></i> Ranking Atual
+    </button>
+    <!-- Abas de histórico injetadas via JS -->
+  </div>
+
   <div class="dash">
-    <div class="dash-header">
-      <div class="dash-logo-wrap">
-        <div class="logo-mark"><i class="ti ti-chart-bar" style="font-size:18px;color:#fff"></i></div>
-        <div>
-          <div class="dash-title">Ranking de operadores — CREDIPAR</div>
-          <div class="dash-sub" id="period-label">Carregando...</div>
+
+    <!-- PAINEL ATUAL -->
+    <div class="tab-panel active" id="panel-atual">
+      <div class="dash-header">
+        <div class="dash-logo-wrap">
+          <div class="logo-mark"><i class="ti ti-chart-bar" style="font-size:18px;color:#fff"></i></div>
+          <div>
+            <div class="dash-title">Ranking de operadores — CREDIPAR</div>
+            <div class="dash-sub" id="period-label">Carregando...</div>
+          </div>
+        </div>
+        <span class="dash-badge" id="status-badge">Carregando...</span>
+      </div>
+
+      <div class="metrics" id="metrics" style="display:none">
+        <div class="metric"><div class="metric-label">Total comissão</div><div class="metric-value" id="m-com">—</div><div class="metric-sub">no ciclo</div></div>
+        <div class="metric"><div class="metric-label">Total recebido</div><div class="metric-value" id="m-rec">—</div><div class="metric-sub">no ciclo</div></div>
+        <div class="metric"><div class="metric-label">Operadores</div><div class="metric-value" id="m-ops">—</div><div class="metric-sub">com meta definida</div></div>
+        <div class="metric"><div class="metric-label">Dias úteis restantes</div><div class="metric-value" id="m-du">—</div><div class="metric-sub" id="m-du-sub">—</div></div>
+      </div>
+
+      <div class="table-controls" id="controls" style="display:none">
+        <div class="sort-pills">
+          <span style="font-size:11px;color:var(--navy-400)">Ordenar:</span>
+          <button class="pill active" data-key="projecao_pct" onclick="sortBy('projecao_pct')">% Projeção</button>
+          <button class="pill" data-key="meta_pct" onclick="sortBy('meta_pct')">% Realizado</button>
+          <button class="pill" data-key="comissao" onclick="sortBy('comissao')">Comissão</button>
+          <button class="pill" data-key="nome" onclick="sortBy('nome')">Nome</button>
         </div>
       </div>
-      <span class="dash-badge" id="status-badge">Carregando...</span>
-    </div>
 
-    <div class="metrics" id="metrics" style="display:none">
-      <div class="metric"><div class="metric-label">Total comissão</div><div class="metric-value" id="m-com">—</div><div class="metric-sub">no ciclo</div></div>
-      <div class="metric"><div class="metric-label">Total recebido</div><div class="metric-value" id="m-rec">—</div><div class="metric-sub">no ciclo</div></div>
-      <div class="metric"><div class="metric-label">Operadores</div><div class="metric-value" id="m-ops">—</div><div class="metric-sub">com meta definida</div></div>
-      <div class="metric"><div class="metric-label">Dias úteis restantes</div><div class="metric-value" id="m-du">—</div><div class="metric-sub" id="m-du-sub">—</div></div>
-    </div>
-
-    <div class="table-controls" id="controls" style="display:none">
-      <div class="sort-pills">
-        <span style="font-size:11px;color:var(--navy-400)">Ordenar:</span>
-        <button class="pill active" data-key="projecao_pct" onclick="sortBy('projecao_pct')">% Projeção</button>
-        <button class="pill" data-key="meta_pct" onclick="sortBy('meta_pct')">% Realizado</button>
-        <button class="pill" data-key="comissao" onclick="sortBy('comissao')">Comissão</button>
-        <button class="pill" data-key="nome" onclick="sortBy('nome')">Nome</button>
+      <div class="table-wrap">
+        <div class="loading" id="loading-msg"><i class="ti ti-loader ti-spin"></i>Carregando ranking...</div>
+        <table id="ranking-table" style="display:none">
+          <thead>
+            <tr>
+              <th style="width:48px">#</th>
+              <th>Operador</th>
+              <th class="r">Realizado</th>
+              <th class="r">Meta</th>
+              <th style="min-width:160px">% Realizado</th>
+              <th class="r">Projeção R$</th>
+              <th style="min-width:150px">% Projeção</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
       </div>
+      <div class="update-info" id="update-info"></div>
     </div>
 
-    <div class="table-wrap">
-      <div class="loading" id="loading-msg"><i class="ti ti-loader ti-spin"></i>Carregando ranking...</div>
-      <table id="ranking-table" style="display:none">
-        <thead>
-          <tr>
-            <th style="width:48px">#</th>
-            <th>Operador</th>
-            <th class="r">Realizado</th>
-            <th class="r">Meta</th>
-            <th style="min-width:160px">% Realizado</th>
-            <th class="r">Projeção R$</th>
-            <th style="min-width:150px">% Projeção</th>
-          </tr>
-        </thead>
-        <tbody id="ranking-body"></tbody>
-      </table>
-    </div>
-    <div class="update-info" id="update-info"></div>
+    <!-- PAINÉIS DE HISTÓRICO (injetados via JS) -->
+    <div id="hist-panels"></div>
+
   </div>
   <div class="footer">Nexus Assessoria de Cobrança · Dashboard CREDIPAR · Uso interno</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBLmm1W-8bxbsG1SDMqzJcG_bJDKIG8Aq8",
@@ -151,37 +192,133 @@ function fmt(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,m
 function fmtPct(v){return v.toFixed(1)+'%';}
 function getColor(pct){if(pct===null||pct===undefined)return '#4a6080';if(pct>=100)return '#4cba80';if(pct>=70)return '#e8a030';return '#e07840';}
 
+// ── Aba atual ────────────────────────────────────────────────────────
 onValue(ref(db,'credipar/ranking'), (snapshot) => {
   const data = snapshot.val();
   if (!data) {
     document.getElementById('loading-msg').innerHTML='<i class="ti ti-info-circle"></i>Nenhum dado publicado ainda. Aguarde o administrador atualizar.';
     return;
   }
-
   const { meta, operadores, atualizadoEm } = data;
   tableData = operadores;
-
   document.getElementById('period-label').textContent = meta.periodLabel;
   const badge = document.getElementById('status-badge');
   badge.textContent = 'Atualizado'; badge.className = 'dash-badge ok';
-
   document.getElementById('m-com').textContent = fmt(operadores.reduce((s,r)=>s+r.com,0));
   document.getElementById('m-rec').textContent = fmt(operadores.reduce((s,r)=>s+r.rec,0));
   document.getElementById('m-ops').textContent = operadores.length;
   document.getElementById('m-du').textContent = meta.duRest;
   document.getElementById('m-du-sub').textContent = `de ${meta.duTotal} úteis no ciclo`;
-
   if (atualizadoEm) {
     const dt = new Date(atualizadoEm);
     document.getElementById('update-info').textContent = `Última atualização: ${dt.toLocaleString('pt-BR')}`;
   }
-
   document.getElementById('metrics').style.display = 'grid';
   document.getElementById('controls').style.display = 'flex';
   document.getElementById('loading-msg').style.display = 'none';
   document.getElementById('ranking-table').style.display = 'table';
   renderTable();
 });
+
+// ── Histórico ────────────────────────────────────────────────────────
+onValue(ref(db,'credipar/historico'), (snapshot) => {
+  const hist = snapshot.val();
+  const tabsBar = document.getElementById('tabs-bar');
+  const histPanels = document.getElementById('hist-panels');
+
+  // Remove abas e painéis antigos de histórico
+  tabsBar.querySelectorAll('.tab-hist').forEach(el => el.remove());
+  histPanels.innerHTML = '';
+
+  if (!hist) return;
+
+  Object.entries(hist).forEach(([chave, dados]) => {
+    const nomeCiclo = dados.nomeCiclo || chave;
+    const tabId = 'hist-' + chave;
+
+    // Aba
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn tab-hist';
+    btn.dataset.tab = tabId;
+    btn.innerHTML = `<i class="ti ti-history"></i> Ranking ${nomeCiclo}`;
+    btn.onclick = () => trocarAba(tabId);
+    tabsBar.appendChild(btn);
+
+    // Painel
+    const operadores = dados.operadores || [];
+    const meta = dados.meta || {};
+    const arquivadoEm = dados.arquivadoEm ? new Date(dados.arquivadoEm).toLocaleString('pt-BR') : '';
+    const totalCom = operadores.reduce((s,r)=>s+(r.com||0),0);
+    const totalRec = operadores.reduce((s,r)=>s+(r.rec||0),0);
+
+    const sorted = [...operadores].sort((a,b)=>(b.projecaoPct||0)-(a.projecaoPct||0));
+
+    const rows = sorted.map((row, i) => {
+      const rank=i+1;
+      const rClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+      const barMeta=row.metaPct!=null?Math.min(row.metaPct,100):0;
+      const barProj=row.projecaoPct!=null?Math.min(row.projecaoPct,100):0;
+      const cMeta=getColor(row.metaPct), cProj=getColor(row.projecaoPct);
+      const dotC=row.projecaoPct>=100?'#4cba80':row.projecaoPct>=70?'#e8a030':'#e07840';
+      return `<tr>
+        <td><span class="rank-num ${rClass}">${rank}</span></td>
+        <td class="op-name">${row.nome}</td>
+        <td class="r" style="font-weight:600;color:#fff">${fmt(row.com)}</td>
+        <td class="r muted">${fmt(row.meta)}</td>
+        <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${barMeta}%;background:${cMeta}"></div></div><span class="bar-label" style="color:${cMeta}">${row.metaPct!=null?fmtPct(row.metaPct):'—'}</span></div></td>
+        <td class="r muted">${fmt(row.projecaoVal||0)}</td>
+        <td><div class="bar-wrap"><span class="dot" style="background:${dotC}"></span><div class="bar-bg"><div class="bar-fill" style="width:${barProj}%;background:${cProj}"></div></div><span class="bar-label" style="color:${cProj}">${row.projecaoPct!=null?fmtPct(row.projecaoPct):'—'}</span></div></td>
+      </tr>`;
+    }).join('');
+
+    const panel = document.createElement('div');
+    panel.className = 'tab-panel';
+    panel.id = 'panel-' + tabId;
+    panel.innerHTML = `
+      <div class="dash-header">
+        <div class="dash-logo-wrap">
+          <div class="logo-mark"><i class="ti ti-history" style="font-size:18px;color:#c9a84c"></i></div>
+          <div>
+            <div class="dash-title">Ranking ${nomeCiclo}</div>
+            <div class="dash-sub">${meta.periodLabel || ''} · Ciclo encerrado</div>
+          </div>
+        </div>
+        <span class="dash-badge hist">Arquivo</span>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Total comissão</div><div class="metric-value">${fmt(totalCom)}</div><div class="metric-sub">no ciclo</div></div>
+        <div class="metric"><div class="metric-label">Total recebido</div><div class="metric-value">${fmt(totalRec)}</div><div class="metric-sub">no ciclo</div></div>
+        <div class="metric"><div class="metric-label">Operadores</div><div class="metric-value">${operadores.length}</div><div class="metric-sub">com meta definida</div></div>
+        <div class="metric"><div class="metric-label">Dias úteis totais</div><div class="metric-value">${meta.duTotal||'—'}</div><div class="metric-sub">no ciclo</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:48px">#</th><th>Operador</th>
+              <th class="r">Realizado</th><th class="r">Meta</th>
+              <th style="min-width:160px">% Realizado</th>
+              <th class="r">Projeção R$</th>
+              <th style="min-width:150px">% Projeção</th>
+            </tr>
+          </thead>
+          <tbody>${rows || '<tr><td colspan="7" class="loading">Sem dados</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="update-info">Ciclo arquivado em: ${arquivadoEm}</div>
+    `;
+    histPanels.appendChild(panel);
+  });
+});
+
+// ── Troca de aba ─────────────────────────────────────────────────────
+window.trocarAba = function(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  document.getElementById('panel-atual').classList.toggle('active', tabId === 'atual');
+  document.querySelectorAll('#hist-panels .tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + tabId);
+  });
+};
 
 window.sortBy = function(key) {
   sortKey = key;

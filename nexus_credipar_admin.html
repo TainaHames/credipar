@@ -132,9 +132,35 @@ tbody td.muted { color: var(--navy-300); font-size: 12px; }
 
     <div class="publish-bar" id="publish-bar">
       <p><i class="ti ti-info-circle"></i> Dados processados e prontos para publicar para a operação.</p>
-      <button class="publish-btn" id="publish-btn" onclick="publishToFirebase()">
-        <i class="ti ti-cloud-upload"></i> Publicar para operação
-      </button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="publish-btn" id="publish-btn" onclick="publishToFirebase()">
+          <i class="ti ti-cloud-upload"></i> Publicar para operação
+        </button>
+        <button class="publish-btn" id="reiniciar-btn" onclick="reiniciarCiclo()" style="background:#c9a84c;color:#1a1000">
+          <i class="ti ti-refresh"></i> Reiniciar Ciclo
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL REINICIAR -->
+    <div id="modal-reiniciar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center">
+      <div style="background:#0f2044;border:1px solid #1a3260;border-radius:14px;padding:28px 32px;max-width:420px;width:90%;text-align:center">
+        <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+        <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Reiniciar Ciclo?</div>
+        <div style="font-size:13px;color:#6b93d6;margin-bottom:20px;line-height:1.6">
+          O ranking atual será <strong style="color:#c9a84c">arquivado</strong> com o nome do ciclo<br>e um novo ciclo em branco será iniciado.<br><br>
+          <span style="color:#e07840">Esta ação não pode ser desfeita.</span>
+        </div>
+        <div style="margin-bottom:20px">
+          <label style="font-size:11px;color:#6b93d6;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Nome do ciclo arquivado</label>
+          <input id="nome-ciclo-input" type="text" placeholder="Ex: Maio 2025"
+            style="background:#0a1628;border:1px solid #1a3260;color:#e2eaf4;border-radius:8px;padding:9px 14px;font-size:14px;width:100%;font-family:inherit;text-align:center">
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button onclick="fecharModal()" style="font-size:13px;padding:9px 20px;border-radius:8px;border:1px solid #1a3260;background:transparent;color:#6b93d6;cursor:pointer;font-family:inherit">Cancelar</button>
+          <button onclick="confirmarReinicio()" style="font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;border:none;background:#c9a84c;color:#1a1000;cursor:pointer;font-family:inherit">Arquivar e Reiniciar</button>
+        </div>
+      </div>
     </div>
 
     <div id="alert-box" class="alert"></div>
@@ -181,7 +207,7 @@ tbody td.muted { color: var(--navy-300); font-size: 12px; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBLmm1W-8bxbsG1SDMqzJcG_bJDKIG8Aq8",
@@ -272,6 +298,60 @@ function renderTable(){
   const tbody=document.getElementById('ranking-body');tbody.innerHTML='';
   sorted.forEach((row,i)=>{const rank=i+1;const rClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';const barMeta=row.metaPct!==null?Math.min(row.metaPct,100):0;const barProj=row.projecaoPct!==null?Math.min(row.projecaoPct,100):0;const cMeta=getColor(row.metaPct),cProj=getColor(row.projecaoPct);const dotC=row.projecaoPct>=100?'#4cba80':row.projecaoPct>=70?'#e8a030':'#e07840';const tr=document.createElement('tr');tr.innerHTML=`<td><span class="rank-num ${rClass}">${rank}</span></td><td class="op-name">${row.nome}</td><td class="r" style="font-weight:600;color:#fff">${fmt(row.com)}</td><td class="r muted">${fmt(row.meta)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${barMeta}%;background:${cMeta}"></div></div><span class="bar-label" style="color:${cMeta}">${row.metaPct!==null?fmtPct(row.metaPct):'—'}</span></div></td><td class="r muted">${fmt(row.projecaoVal)}</td><td><div class="bar-wrap"><span class="dot" style="background:${dotC}"></span><div class="bar-bg"><div class="bar-fill" style="width:${barProj}%;background:${cProj}"></div></div><span class="bar-label" style="color:${cProj}">${row.projecaoPct!==null?fmtPct(row.projecaoPct):'—'}</span></div></td>`;tbody.appendChild(tr);});
 }
+
+window.reiniciarCiclo = function() {
+  if (!tableData.length) { showAlert('Publique os dados antes de reiniciar o ciclo.'); return; }
+  // Sugere nome do ciclo com base no período atual
+  const hoje = new Date();
+  const mesNome = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  document.getElementById('nome-ciclo-input').value = mesNome.charAt(0).toUpperCase() + mesNome.slice(1);
+  document.getElementById('modal-reiniciar').style.display = 'flex';
+};
+
+window.fecharModal = function() {
+  document.getElementById('modal-reiniciar').style.display = 'none';
+};
+
+window.confirmarReinicio = async function() {
+  const nomeCiclo = document.getElementById('nome-ciclo-input').value.trim();
+  if (!nomeCiclo) { alert('Informe o nome do ciclo.'); return; }
+
+  const btn = document.querySelector('#modal-reiniciar button:last-child');
+  btn.textContent = 'Arquivando…'; btn.disabled = true;
+
+  try {
+    // 1. Busca dados atuais publicados
+    const snap = await get(ref(db, 'credipar/ranking'));
+    if (snap.exists()) {
+      // 2. Arquiva no histórico com a chave = nome do ciclo (slug)
+      const chave = nomeCiclo.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_').toUpperCase();
+      await set(ref(db, `credipar/historico/${chave}`), { ...snap.val(), nomeCiclo, arquivadoEm: new Date().toISOString() });
+    }
+
+    // 3. Limpa ranking atual
+    await remove(ref(db, 'credipar/ranking'));
+
+    // 4. Reset da UI
+    dadosPag1 = null; dadosPag2 = null; dadosMetas = null;
+    tableData = []; metaGlobal = {};
+    ['name-pag1','name-pag2','name-meta'].forEach(id => { const el = document.getElementById(id); el.textContent = 'Nenhum arquivo selecionado'; el.className = 'slot-name'; });
+    ['slot1','slot2','slot3'].forEach(id => document.getElementById(id).classList.remove('loaded'));
+    document.getElementById('metrics').style.display = 'none';
+    document.getElementById('controls').style.display = 'none';
+    document.getElementById('publish-bar').style.display = 'none';
+    document.getElementById('ranking-table').style.display = 'none';
+    document.getElementById('empty-msg').style.display = 'block';
+    document.getElementById('period-label').textContent = 'Nenhum arquivo carregado';
+    const badge = document.getElementById('status-badge'); badge.textContent = 'Aguardando arquivos'; badge.className = 'dash-badge';
+    hideAlert();
+
+    document.getElementById('modal-reiniciar').style.display = 'none';
+    alert(`✅ Ciclo "${nomeCiclo}" arquivado com sucesso!\nNovo ciclo iniciado.`);
+  } catch(e) {
+    showAlert('Erro ao reiniciar ciclo: ' + e.message);
+    btn.textContent = 'Arquivar e Reiniciar'; btn.disabled = false;
+  }
+};
 
 window.exportCSV = function(){if(!tableData.length)return;const sorted=[...tableData].sort((a,b)=>(b.projecaoPct||0)-(a.projecaoPct||0));const rows=[['Rank','Operador','Realizado R$','Meta R$','% Realizado','Projeção R$','% Projeção']];sorted.forEach((r,i)=>rows.push([i+1,r.nome,r.com.toFixed(2),r.meta.toFixed(2),r.metaPct!==null?fmtPct(r.metaPct):'',r.projecaoVal.toFixed(2),r.projecaoPct!==null?fmtPct(r.projecaoPct):'']));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8;'}));a.download='ranking_credipar.csv';a.click();};
 </script>
