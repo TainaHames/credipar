@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CREDIPAR – Admin | Nexus</title>
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy2: #1b2e45;
+    --navy3: #243b55;
+    --accent: #1e90ff;
+    --accent2: #0a6edb;
+    --gold: #f0a500;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--navy2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-badge { background: var(--accent); color: #fff; font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 6px; letter-spacing: 1px; }
+  .logo-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .logo-sub { font-size: 11px; color: var(--text2); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .badge-admin { background: rgba(240,165,0,0.15); color: var(--gold); border: 1px solid rgba(240,165,0,0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+  /* MAIN */
+  main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+
+  /* SECTION TITLE */
+  .section-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; }
+
+  /* CARDS ROW */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .card { background: var(--navy2); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; }
+  .card-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .card-value { font-size: 24px; font-weight: 700; }
+  .card-value.green { color: var(--green); }
+  .card-value.gold { color: var(--gold); }
+  .card-value.blue { color: var(--accent); }
+
+  /* PANEL */
+  .panel { background: var(--navy2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 2rem; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: .5rem; }
+  .panel-title { font-size: 15px; font-weight: 700; }
+
+  /* UPLOAD AREA */
+  .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 700px) { .upload-grid { grid-template-columns: 1fr; } }
+
+  .upload-card { background: var(--navy3); border: 2px dashed rgba(30,144,255,0.3); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: border-color .2s; }
+  .upload-card:hover { border-color: var(--accent); }
+  .upload-card input[type=file] { display: none; }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: var(--text2); }
+
+  .upload-btn { display: inline-block; margin-top: 12px; background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .upload-btn:hover { background: var(--accent2); }
+
+  .file-preview { margin-top: 10px; font-size: 12px; color: var(--green); min-height: 18px; }
+
+  /* CYCLE */
+  .cycle-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-group label { font-size: 12px; color: var(--text2); }
+  .field-group input { background: var(--navy3); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 13px; width: 180px; }
+  .field-group input:focus { outline: none; border-color: var(--accent); }
+
+  .btn { padding: 9px 22px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: .2s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .btn-danger:hover { background: rgba(239,68,68,0.25); }
+  .btn-gold { background: rgba(240,165,0,0.15); color: var(--gold); border: 1px solid rgba(240,165,0,0.3); }
+  .btn-gold:hover { background: rgba(240,165,0,0.25); }
+
+  /* METAS TABLE */
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .meta-item { background: var(--navy3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .meta-name { font-size: 13px; font-weight: 500; }
+  .meta-val { font-size: 13px; color: var(--gold); font-weight: 700; }
+  .meta-input { background: var(--navy2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 13px; width: 90px; text-align: right; }
+  .meta-input:focus { outline: none; border-color: var(--accent); }
+
+  /* LOG TABLE */
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .log-table th { text-align: left; color: var(--text2); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+  .log-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .log-table tr:last-child td { border-bottom: none; }
+
+  /* STATUS */
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot-gold { background: var(--gold); }
+  .dot-red { background: var(--red); }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--navy2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 14px 20px; border-radius: 10px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 9999; max-width: 320px; }
+  #toast.show { opacity: 1; }
+  #toast.success { border-left-color: var(--green); }
+  #toast.error { border-left-color: var(--red); }
+
+  /* PROGRESS BAR */
+  .progress-wrap { background: rgba(255,255,255,0.06); border-radius: 99px; height: 6px; overflow: hidden; }
+  .progress-bar { height: 100%; border-radius: 99px; background: var(--accent); transition: width .4s; }
+  .progress-bar.gold { background: var(--gold); }
+  .progress-bar.green { background: var(--green); }
+
+  /* UTILS */
+  .mt1 { margin-top: 1rem; }
+  .mt2 { margin-top: 1.5rem; }
+  .flex-gap { display: flex; gap: 10px; flex-wrap: wrap; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  /* RANKING PREVIEW */
+  .rank-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rank-table th { text-align: left; color: var(--text2); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+  .rank-table td { padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+  .rank-table tr:last-child td { border-bottom: none; }
+  .rank-pos { font-size: 16px; font-weight: 800; color: var(--text2); width: 30px; }
+  .rank-pos.p1 { color: #ffd700; }
+  .rank-pos.p2 { color: #c0c0c0; }
+  .rank-pos.p3 { color: #cd7f32; }
+  .op-name { font-weight: 600; font-size: 14px; }
+  .pct-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+  .pct-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .pct-gold { background: rgba(240,165,0,0.15); color: var(--gold); }
+  .pct-red { background: rgba(239,68,68,0.15); color: var(--red); }
+
+  /* LOADING */
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #loading-overlay { position: fixed; inset: 0; background: rgba(13,27,42,0.85); z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  #loading-overlay p { font-size: 15px; color: var(--text2); }
+  .big-spinner { width: 48px; height: 48px; border-width: 4px; }
+
+  .hidden { display: none !important; }
+
+  /* CYCLE INFO */
+  .cycle-info { background: rgba(30,144,255,0.08); border: 1px solid rgba(30,144,255,0.2); border-radius: 10px; padding: 12px 16px; display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cycle-info-item { font-size: 13px; }
+  .cycle-info-item span { color: var(--text2); }
+  .cycle-info-item strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="spinner big-spinner"></div>
+  <p>Conectando ao Firebase…</p>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-badge">NEXUS</div>
+    <div>
+      <div class="logo-title">Ranking CREDIPAR</div>
+      <div class="logo-sub">Painel Administrativo</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="badge-admin">⚙ ADMIN</span>
+    <div id="fb-status" style="font-size:12px;color:var(--text2);">Conectando…</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- CARDS RESUMO -->
+  <div class="section-title">Resumo do Ciclo Atual</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Ciclo Ativo</div>
+      <div class="card-value blue" id="card-ciclo">--</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total Realizado</div>
+      <div class="card-value green" id="card-realizado">R$ --</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Meta Total da Equipe</div>
+      <div class="card-value gold" id="card-meta">R$ --</div>
+    </div>
+    <div class="card">
+      <div class="card-label">% Projeção Equipe</div>
+      <div class="card-value" id="card-proj">--%</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Dias Úteis Trabalhados</div>
+      <div class="card-value blue" id="card-du">-- / --</div>
+    </div>
+  </div>
+
+  <!-- CICLO E DIAS ÚTEIS -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">📅 Configuração do Ciclo</div>
+    </div>
+    <div class="cycle-row">
+      <div class="field-group">
+        <label>Início do Ciclo</label>
+        <input type="date" id="ciclo-inicio">
+      </div>
+      <div class="field-group">
+        <label>Fim do Ciclo</label>
+        <input type="date" id="ciclo-fim">
+      </div>
+      <div class="field-group">
+        <label>Dias Úteis Totais no Ciclo</label>
+        <input type="number" id="du-total" placeholder="Ex: 22" style="width:160px">
+      </div>
+      <div class="field-group">
+        <label>Dias Úteis Trabalhados Até Hoje</label>
+        <input type="number" id="du-trabalhados" placeholder="Ex: 10" style="width:200px">
+      </div>
+      <button class="btn btn-primary" onclick="salvarCiclo()">Salvar Ciclo</button>
+    </div>
+    <div class="mt1" id="ciclo-atual-info"></div>
+  </div>
+
+  <!-- UPLOAD DE ARQUIVO -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">📂 Importar Arquivo Analítico</div>
+      <div class="flex-gap">
+        <span style="font-size:12px;color:var(--text2);">Colunas necessárias: <strong>Operador · Dt. Pgto · Com.Ass · Valor Recebido</strong></span>
+      </div>
+    </div>
+    <div class="upload-grid">
+      <div class="upload-card" onclick="document.getElementById('file-59').click()">
+        <div class="upload-icon">📄</div>
+        <div class="upload-label">Carteira 59</div>
+        <div class="upload-sub">Arraste ou clique para selecionar o XLS/XLSX</div>
+        <input type="file" id="file-59" accept=".xls,.xlsx,.csv" onchange="previewFile('59',this)">
+        <div class="file-preview" id="preview-59"></div>
+        <button class="upload-btn" onclick="event.stopPropagation();processarArquivo('59')">Processar Carteira 59</button>
+      </div>
+      <div class="upload-card" onclick="document.getElementById('file-69').click()">
+        <div class="upload-icon">📄</div>
+        <div class="upload-label">Carteira 69</div>
+        <div class="upload-sub">Arraste ou clique para selecionar o XLS/XLSX</div>
+        <input type="file" id="file-69" accept=".xls,.xlsx,.csv" onchange="previewFile('69',this)">
+        <div class="file-preview" id="preview-69"></div>
+        <button class="upload-btn" onclick="event.stopPropagation();processarArquivo('69')">Processar Carteira 69</button>
+      </div>
+    </div>
+    <div class="mt1">
+      <button class="btn btn-primary" onclick="processarAmbas()">⚡ Processar Ambas as Carteiras</button>
+      <button class="btn btn-danger" style="margin-left:8px" onclick="limparDadosCiclo()">🗑 Limpar Dados do Ciclo</button>
+    </div>
+    <div id="import-log" class="mt1" style="font-size:13px;color:var(--text2);"></div>
+  </div>
+
+  <!-- METAS DOS OPERADORES -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">🎯 Metas dos Operadores</div>
+      <div class="flex-gap">
+        <button class="btn btn-gold" onclick="salvarMetas()">💾 Salvar Metas</button>
+      </div>
+    </div>
+    <div class="meta-grid" id="meta-grid">
+      <!-- preenchido via JS -->
+    </div>
+    <div class="mt1">
+      <button class="btn btn-primary" onclick="adicionarOperador()">+ Adicionar Operador</button>
+    </div>
+  </div>
+
+  <!-- RANKING PREVIEW -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">🏆 Preview do Ranking (ordem por % Projeção)</div>
+      <button class="btn btn-primary" onclick="carregarRanking()">🔄 Atualizar</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Operador</th>
+            <th>Realizado (Com.Ass)</th>
+            <th>Meta</th>
+            <th>% Realizado</th>
+            <th>Projeção R$</th>
+            <th>% Projeção</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-body">
+          <tr><td colspan="7" style="text-align:center;color:var(--text2);padding:2rem">Carregando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LOG DE IMPORTAÇÕES -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">📋 Histórico de Importações</div>
+      <button class="btn btn-danger" onclick="limparLog()">Limpar Log</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Carteira</th>
+            <th>Registros</th>
+            <th>Operadores</th>
+            <th>Total Com.Ass</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="log-body">
+          <tr><td colspan="6" style="text-align:center;color:var(--text2);padding:1.5rem">Nenhum registro</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<!-- SheetJS para leitura de XLS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLmm1W-8bxbsG1SDMqzJcG_bJDKIG8Aq8",
+  authDomain: "ranking-credipar.firebaseapp.com",
+  databaseURL: "https://ranking-credipar-default-rtdb.firebaseio.com",
+  projectId: "ranking-credipar",
+  storageBucket: "ranking-credipar.firebasestorage.app",
+  messagingSenderId: "175681921949",
+  appId: "1:175681921949:web:cd06adfc7cf472766c4574"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ─── Operadores com meta ──────────────────────────────────────────────
+const OPERADORES_PADRAO = [
+  { nome: "CAMILE DE LIMA",                          meta: 3500 },
+  { nome: "DANILLA SILVA MACEDO",                    meta: 7000 },
+  { nome: "EDUARDA PEREIRA VIEIRA",                  meta: 7000 },
+  { nome: "GISELLE MARLENE DA SIVA",                 meta: 7000 },
+  { nome: "JOANA LARISSA PEREIRA ALMIRANTE BARROS",  meta: 7000 },
+  { nome: "KAHENA KELLY DE OLIVEIRA CABRAL",         meta: 3500 },
+  { nome: "KARLA ORESTINA MARQUES DA ROSA",          meta: 3500 },
+  { nome: "LIZ DANIELLE DOS SANTOS SOUZA",           meta: 7000 },
+  { nome: "MARCELO KAUA SANTOS ALVES DA SILVA",      meta: 7000 },
+  { nome: "MARILIA GABRIELA COSTA",                  meta: 7000 },
+  { nome: "MERYELY M",                               meta: 7000 },
+  { nome: "TALITHA CAMBRAIA PINTO",                  meta: 7000 },
+  { nome: "ZEUS EMMANUEL MEJIA CASTELLANO",          meta: 3500 },
+];
+
+let metas = {}; // { NOME: meta_valor }
+let ciclo = {};
+let dadosPagamentos = {}; // { NOME: valor_comass }
+let duTotal = 0, duTrabalhados = 0;
+let logImport = [];
+let arquivos = { '59': null, '69': null };
+
+// ─── Funções globais expostas ─────────────────────────────────────────
+window.previewFile = (cart, input) => {
+  arquivos[cart] = input.files[0];
+  document.getElementById('preview-' + cart).textContent = input.files[0]?.name || '';
+};
+
+window.processarArquivo = (cart) => processar([cart]);
+window.processarAmbas = () => processar(['59', '69']);
+
+window.salvarCiclo = salvarCiclo;
+window.salvarMetas = salvarMetas;
+window.carregarRanking = renderRanking;
+window.limparDadosCiclo = limparDadosCiclo;
+window.limparLog = limparLog;
+window.adicionarOperador = adicionarOperador;
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    await carregarTudo();
+    document.getElementById('loading-overlay').classList.add('hidden');
+    document.getElementById('fb-status').innerHTML = '<span class="status-dot dot-green"></span>Conectado';
+    toast('Firebase conectado!', 'success');
+  } catch(e) {
+    document.getElementById('loading-overlay').classList.add('hidden');
+    document.getElementById('fb-status').innerHTML = '<span class="status-dot dot-red"></span>Erro';
+    toast('Erro ao conectar: ' + e.message, 'error');
+  }
+}
+
+async function carregarTudo() {
+  // Metas
+  const snapMetas = await get(ref(db, 'metas'));
+  if (snapMetas.exists()) {
+    metas = snapMetas.val();
+  } else {
+    OPERADORES_PADRAO.forEach(o => metas[o.nome] = o.meta);
+    await set(ref(db, 'metas'), metas);
+  }
+  renderMetas();
+
+  // Ciclo
+  const snapCiclo = await get(ref(db, 'ciclo'));
+  if (snapCiclo.exists()) {
+    ciclo = snapCiclo.val();
+    document.getElementById('ciclo-inicio').value = ciclo.inicio || '';
+    document.getElementById('ciclo-fim').value = ciclo.fim || '';
+    document.getElementById('du-total').value = ciclo.duTotal || '';
+    document.getElementById('du-trabalhados').value = ciclo.duTrabalhados || '';
+    duTotal = ciclo.duTotal || 0;
+    duTrabalhados = ciclo.duTrabalhados || 0;
+    atualizarCicloInfo();
+  }
+
+  // Pagamentos
+  const snapPgto = await get(ref(db, 'pagamentos'));
+  if (snapPgto.exists()) dadosPagamentos = snapPgto.val();
+
+  // Log
+  const snapLog = await get(ref(db, 'log_importacoes'));
+  if (snapLog.exists()) {
+    logImport = Object.values(snapLog.val());
+    renderLog();
+  }
+
+  renderCards();
+  renderRanking();
+}
+
+// ─── CICLO ────────────────────────────────────────────────────────────
+async function salvarCiclo() {
+  const inicio = document.getElementById('ciclo-inicio').value;
+  const fim = document.getElementById('ciclo-fim').value;
+  duTotal = parseInt(document.getElementById('du-total').value) || 0;
+  duTrabalhados = parseInt(document.getElementById('du-trabalhados').value) || 0;
+
+  if (!inicio || !fim) { toast('Informe as datas do ciclo', 'error'); return; }
+
+  ciclo = { inicio, fim, duTotal, duTrabalhados };
+  await set(ref(db, 'ciclo'), ciclo);
+  atualizarCicloInfo();
+  renderCards();
+  renderRanking();
+  toast('Ciclo salvo!', 'success');
+}
+
+function atualizarCicloInfo() {
+  const el = document.getElementById('ciclo-atual-info');
+  if (!ciclo.inicio) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="cycle-info">
+      <div class="cycle-info-item"><span>Período:</span> <strong>${fmt(ciclo.inicio)} → ${fmt(ciclo.fim)}</strong></div>
+      <div class="cycle-info-item"><span>Dias úteis totais:</span> <strong>${ciclo.duTotal || '--'}</strong></div>
+      <div class="cycle-info-item"><span>Dias trabalhados:</span> <strong>${ciclo.duTrabalhados || '--'}</strong></div>
+      <div class="cycle-info-item"><span>Fator projeção:</span> <strong>${ciclo.duTrabalhados && ciclo.duTotal ? (ciclo.duTotal/ciclo.duTrabalhados).toFixed(2)+'x' : '--'}</strong></div>
+    </div>`;
+}
+
+function fmt(d) {
+  if (!d) return '--';
+  const [y,m,dd] = d.split('-');
+  return `${dd}/${m}/${y}`;
+}
+
+// ─── METAS ────────────────────────────────────────────────────────────
+function renderMetas() {
+  const grid = document.getElementById('meta-grid');
+  grid.innerHTML = '';
+  Object.entries(metas).forEach(([nome, val]) => {
+    const div = document.createElement('div');
+    div.className = 'meta-item';
+    div.innerHTML = `
+      <div class="meta-name">${nome}</div>
+      <input class="meta-input" type="number" data-nome="${nome}" value="${val}" min="0">
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function adicionarOperador() {
+  const nome = prompt('Nome do operador (em maiúsculas):');
+  if (!nome) return;
+  const meta = parseFloat(prompt('Meta mensal (R$):') || '0');
+  metas[nome.toUpperCase()] = meta;
+  renderMetas();
+  toast('Operador adicionado. Clique em Salvar Metas.', 'success');
+}
+
+async function salvarMetas() {
+  document.querySelectorAll('.meta-input').forEach(inp => {
+    metas[inp.dataset.nome] = parseFloat(inp.value) || 0;
+  });
+  await set(ref(db, 'metas'), metas);
+  renderCards();
+  renderRanking();
+  toast('Metas salvas!', 'success');
+}
+
+// ─── PROCESSAR ARQUIVO ───────────────────────────────────────────────
+async function processar(carteiras) {
+  for (const cart of carteiras) {
+    const file = arquivos[cart];
+    if (!file) { toast(`Selecione o arquivo da Carteira ${cart}`, 'error'); continue; }
+
+    const logEl = document.getElementById('import-log');
+    logEl.textContent = `Processando Carteira ${cart}…`;
+
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+      // Detectar coluna Operador e Com.Ass (case-insensitive)
+      const keys = Object.keys(rows[0] || {});
+      const colOp  = keys.find(k => k.toLowerCase().includes('operador'));
+      const colCom = keys.find(k => k.toLowerCase().replace('.','').replace(' ','') === 'comass' || k.toLowerCase().includes('com.ass') || k.toLowerCase().includes('comass'));
+
+      if (!colOp || !colCom) {
+        toast(`Carteira ${cart}: Colunas "Operador" ou "Com.Ass" não encontradas`, 'error');
+        logEl.textContent = `Erro: colunas não encontradas. Colunas presentes: ${keys.join(', ')}`;
+        continue;
+      }
+
+      // Agrupa por operador
+      const totalPorOp = {};
+      let totalComAss = 0;
+      rows.forEach(row => {
+        const op = String(row[colOp] || '').trim().toUpperCase();
+        const val = parseFloat(String(row[colCom]).replace(',','.')) || 0;
+        if (op) {
+          totalPorOp[op] = (totalPorOp[op] || 0) + val;
+          totalComAss += val;
+        }
+      });
+
+      // Atualiza no Firebase — soma com o que já existe
+      for (const [op, val] of Object.entries(totalPorOp)) {
+        const snapAtual = await get(ref(db, `pagamentos/${encodeNome(op)}`));
+        const atual = snapAtual.exists() ? snapAtual.val() : 0;
+        await set(ref(db, `pagamentos/${encodeNome(op)}`), atual + val);
+        dadosPagamentos[encodeNome(op)] = (dadosPagamentos[encodeNome(op)] || 0) + val;
+      }
+
+      // Registra log
+      const entrada = {
+        ts: new Date().toISOString(),
+        carteira: cart,
+        registros: rows.length,
+        operadores: Object.keys(totalPorOp).length,
+        totalComAss: totalComAss.toFixed(2)
+      };
+      await push(ref(db, 'log_importacoes'), entrada);
+      logImport.push(entrada);
+      renderLog();
+
+      logEl.textContent = `✅ Carteira ${cart} processada — ${rows.length} registros, ${Object.keys(totalPorOp).length} operadores, R$ ${moeda(totalComAss)}`;
+      toast(`Carteira ${cart} importada com sucesso!`, 'success');
+
+    } catch(e) {
+      toast(`Erro ao processar Carteira ${cart}: ${e.message}`, 'error');
+      document.getElementById('import-log').textContent = 'Erro: ' + e.message;
+    }
+  }
+
+  renderCards();
+  renderRanking();
+}
+
+function encodeNome(nome) {
+  return nome.replace(/[.#$[\]/]/g, '_');
+}
+function decodeNome(enc) {
+  // chave = nome já limpo, o encode só troca chars proibidos
+  return Object.keys(metas).find(k => encodeNome(k) === enc) || enc;
+}
+
+// ─── LIMPAR DADOS ─────────────────────────────────────────────────────
+async function limparDadosCiclo() {
+  if (!confirm('Tem certeza? Isso apaga todos os dados de pagamento do ciclo atual.')) return;
+  await remove(ref(db, 'pagamentos'));
+  dadosPagamentos = {};
+  renderCards();
+  renderRanking();
+  toast('Dados do ciclo limpos!', 'success');
+}
+
+async function limparLog() {
+  if (!confirm('Limpar histórico de importações?')) return;
+  await remove(ref(db, 'log_importacoes'));
+  logImport = [];
+  renderLog();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────
+function buildRanking() {
+  const fator = (duTrabalhados > 0 && duTotal > 0) ? duTotal / duTrabalhados : 1;
+
+  return Object.entries(metas)
+    .map(([nome, meta]) => {
+      const realizado = dadosPagamentos[encodeNome(nome)] || 0;
+      const pctRealizado = meta > 0 ? (realizado / meta) * 100 : 0;
+      const projecao = realizado * fator;
+      const pctProjecao = meta > 0 ? (projecao / meta) * 100 : 0;
+      return { nome, meta, realizado, pctRealizado, projecao, pctProjecao };
+    })
+    .sort((a, b) => b.pctProjecao - a.pctProjecao);
+}
+
+function renderRanking() {
+  const ranking = buildRanking();
+  const tbody = document.getElementById('ranking-body');
+  tbody.innerHTML = '';
+  ranking.forEach((r, i) => {
+    const cls = r.pctProjecao >= 100 ? 'pct-green' : r.pctProjecao >= 70 ? 'pct-gold' : 'pct-red';
+    const posCls = i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
+    tbody.innerHTML += `
+      <tr>
+        <td><span class="rank-pos ${posCls}">${i+1}º</span></td>
+        <td><span class="op-name">${r.nome}</span></td>
+        <td>R$ ${moeda(r.realizado)}</td>
+        <td>R$ ${moeda(r.meta)}</td>
+        <td><span class="pct-badge ${cls}">${r.pctRealizado.toFixed(1)}%</span></td>
+        <td>R$ ${moeda(r.projecao)}</td>
+        <td><span class="pct-badge ${cls}">${r.pctProjecao.toFixed(1)}%</span></td>
+      </tr>`;
+  });
+}
+
+function renderCards() {
+  const ranking = buildRanking();
+  const totalReal = ranking.reduce((s,r) => s + r.realizado, 0);
+  const totalMeta = ranking.reduce((s,r) => s + r.meta, 0);
+  const fator = (duTrabalhados > 0 && duTotal > 0) ? duTotal / duTrabalhados : 1;
+  const pctProj = totalMeta > 0 ? ((totalReal * fator) / totalMeta) * 100 : 0;
+  const cls = pctProj >= 100 ? 'green' : pctProj >= 70 ? 'gold' : 'red';
+
+  document.getElementById('card-ciclo').textContent = ciclo.inicio ? `${fmt(ciclo.inicio)} → ${fmt(ciclo.fim)}` : '--';
+  document.getElementById('card-realizado').textContent = 'R$ ' + moeda(totalReal);
+  document.getElementById('card-meta').textContent = 'R$ ' + moeda(totalMeta);
+  document.getElementById('card-proj').textContent = pctProj.toFixed(1) + '%';
+  document.getElementById('card-proj').className = 'card-value ' + cls;
+  document.getElementById('card-du').textContent = `${duTrabalhados || '--'} / ${duTotal || '--'}`;
+}
+
+function renderLog() {
+  const tbody = document.getElementById('log-body');
+  if (!logImport.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:1.5rem">Nenhum registro</td></tr>';
+    return;
+  }
+  tbody.innerHTML = [...logImport].reverse().map(l => `
+    <tr>
+      <td>${new Date(l.ts).toLocaleString('pt-BR')}</td>
+      <td>Carteira ${l.carteira}</td>
+      <td>${l.registros}</td>
+      <td>${l.operadores}</td>
+      <td>R$ ${moeda(parseFloat(l.totalComAss))}</td>
+      <td><span class="status-dot dot-green"></span>OK</td>
+    </tr>`).join('');
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────
+function moeda(v) {
+  return (v||0).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function toast(msg, tipo='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + tipo;
+  setTimeout(() => t.className = '', 3500);
+}
+
+// ─── START ────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

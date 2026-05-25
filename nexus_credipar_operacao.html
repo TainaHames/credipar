@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CREDIPAR – Ranking | Nexus</title>
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy2: #1b2e45;
+    --navy3: #243b55;
+    --accent: #1e90ff;
+    --gold: #f0a500;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--navy2);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 70px; position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo-badge { background: var(--accent); color: #fff; font-weight: 800; font-size: 14px; padding: 5px 12px; border-radius: 7px; letter-spacing: 1px; }
+  .logo-title { font-size: 18px; font-weight: 800; }
+  .logo-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  /* CICLO BADGE */
+  .ciclo-badge { background: rgba(30,144,255,0.1); border: 1px solid rgba(30,144,255,0.25); border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; color: var(--accent); }
+  .du-badge { background: rgba(240,165,0,0.1); border: 1px solid rgba(240,165,0,0.25); border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; color: var(--gold); }
+
+  /* MAIN */
+  main { padding: 1.5rem 2rem 3rem; max-width: 1300px; margin: 0 auto; }
+
+  /* SUMMARY CARDS */
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .sum-card { background: var(--navy2); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.5rem; text-align: center; }
+  .sum-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .sum-value { font-size: 22px; font-weight: 800; }
+  .sum-value.green { color: var(--green); }
+  .sum-value.gold { color: var(--gold); }
+  .sum-value.blue { color: var(--accent); }
+  .sum-value.red { color: var(--red); }
+
+  /* RANKING TABLE */
+  .rank-wrap { background: var(--navy2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .rank-header-bar { padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .rank-header-bar h2 { font-size: 16px; font-weight: 700; }
+  .last-update { font-size: 12px; color: var(--text2); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: rgba(255,255,255,0.03);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background .15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody td { padding: 14px 16px; vertical-align: middle; }
+
+  /* POSIÇÃO */
+  .pos { font-size: 20px; font-weight: 900; width: 32px; text-align: center; }
+  .p1 { color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,0.4); }
+  .p2 { color: #c0c0c0; }
+  .p3 { color: #cd7f32; }
+  .p-rest { color: var(--text2); font-size: 16px; }
+
+  /* OPERADOR */
+  .op-cell { display: flex; align-items: center; gap: 12px; }
+  .op-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #0a6edb);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; flex-shrink: 0;
+  }
+  .p1-row .op-avatar { background: linear-gradient(135deg, #ffd700, #f0a500); color: #1b2e45; }
+  .p2-row .op-avatar { background: linear-gradient(135deg, #c0c0c0, #888); color: #1b2e45; }
+  .p3-row .op-avatar { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+  .op-name { font-weight: 700; font-size: 14px; }
+
+  /* VALORES */
+  .val { font-weight: 600; font-size: 14px; }
+  .val-dim { font-size: 12px; color: var(--text2); }
+
+  /* BADGES PCT */
+  .pct { padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; display: inline-block; }
+  .pct-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+  .pct-gold  { background: rgba(240,165,0,0.15);  color: var(--gold);  border: 1px solid rgba(240,165,0,0.2); }
+  .pct-red   { background: rgba(239,68,68,0.15);  color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
+
+  /* BARRA DE PROGRESSO */
+  .bar-wrap { height: 6px; background: rgba(255,255,255,0.07); border-radius: 99px; width: 120px; overflow: hidden; }
+  .bar { height: 100%; border-radius: 99px; transition: width .5s ease; }
+  .bar-green { background: linear-gradient(90deg, #22c55e, #16a34a); }
+  .bar-gold  { background: linear-gradient(90deg, #f0a500, #d97706); }
+  .bar-red   { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+  /* PODIUM TOP 3 */
+  .podium-row { background: rgba(30,144,255,0.04); }
+  .p1-row { background: rgba(255,215,0,0.04) !important; border-left: 3px solid #ffd700; }
+  .p2-row { background: rgba(192,192,192,0.04) !important; border-left: 3px solid #c0c0c0; }
+  .p3-row { background: rgba(205,127,50,0.04) !important; border-left: 3px solid #cd7f32; }
+
+  /* CROWN ICON */
+  .crown { font-size: 18px; margin-left: 4px; }
+
+  /* LOADING */
+  #loading { position: fixed; inset: 0; background: var(--navy); z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .spinner { width: 52px; height: 52px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p { font-size: 16px; color: var(--text2); }
+  .hidden { display: none !important; }
+
+  /* ATUALIZAÇÃO AUTO */
+  .auto-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(0.8); } }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 4rem 2rem; color: var(--text2); }
+  .empty-icon { font-size: 48px; margin-bottom: 1rem; }
+  .empty-msg { font-size: 16px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    header { padding: 0 1rem; height: auto; flex-direction: column; gap: 8px; padding: 12px 1rem; }
+    main { padding: 1rem; }
+    .bar-wrap { width: 80px; }
+    .val-dim { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Carregando ranking…</p>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-badge">NEXUS</div>
+    <div>
+      <div class="logo-title">🏆 Ranking CREDIPAR</div>
+      <div class="logo-sub">Carteira 59 + Carteira 69 · Com.Ass</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="ciclo-badge" id="h-ciclo">Ciclo --</div>
+    <div class="du-badge" id="h-du">DU: -- / --</div>
+    <div class="auto-badge"><div class="pulse"></div>Ao vivo</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- CARDS RESUMO -->
+  <div class="summary">
+    <div class="sum-card">
+      <div class="sum-label">Total Realizado</div>
+      <div class="sum-value green" id="s-realizado">R$ --</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">Meta da Equipe</div>
+      <div class="sum-value gold" id="s-meta">R$ --</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">% Realizado</div>
+      <div class="sum-value blue" id="s-pct-real">--%</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">Projeção Equipe</div>
+      <div class="sum-value" id="s-proj">R$ --</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">% Projeção</div>
+      <div class="sum-value" id="s-pct-proj">--%</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">Operadores no Ranking</div>
+      <div class="sum-value blue" id="s-ops">--</div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div class="rank-wrap">
+    <div class="rank-header-bar">
+      <h2>📊 Ranking de Operadores · Ordenado por % Projeção</h2>
+      <div class="last-update" id="last-update">--</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:50px">#</th>
+            <th>Operador</th>
+            <th>Realizado (Com.Ass)</th>
+            <th>Meta Mensal</th>
+            <th>% Realizado</th>
+            <th>Projeção R$</th>
+            <th>% Projeção</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLmm1W-8bxbsG1SDMqzJcG_bJDKIG8Aq8",
+  authDomain: "ranking-credipar.firebaseapp.com",
+  databaseURL: "https://ranking-credipar-default-rtdb.firebaseio.com",
+  projectId: "ranking-credipar",
+  storageBucket: "ranking-credipar.firebasestorage.app",
+  messagingSenderId: "175681921949",
+  appId: "1:175681921949:web:cd06adfc7cf472766c4574"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let metas = {}, pagamentos = {}, ciclo = {};
+
+function encodeNome(nome) {
+  return nome.replace(/[.#$[\]/]/g, '_');
+}
+
+function buildRanking() {
+  const duT = ciclo.duTotal || 0;
+  const duTr = ciclo.duTrabalhados || 0;
+  const fator = (duTr > 0 && duT > 0) ? duT / duTr : 1;
+
+  return Object.entries(metas)
+    .filter(([,m]) => m > 0)
+    .map(([nome, meta]) => {
+      const realizado = pagamentos[encodeNome(nome)] || 0;
+      const pctReal = meta > 0 ? (realizado / meta) * 100 : 0;
+      const projecao = duTr > 0 ? realizado * fator : realizado;
+      const pctProj = meta > 0 ? (projecao / meta) * 100 : 0;
+      return { nome, meta, realizado, pctReal, projecao, pctProj };
+    })
+    .sort((a, b) => b.pctProj - a.pctProj);
+}
+
+function iniciais(nome) {
+  const parts = nome.trim().split(' ');
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return nome.substring(0, 2).toUpperCase();
+}
+
+function moeda(v) {
+  return (v||0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function pctCls(v) {
+  return v >= 100 ? 'pct-green' : v >= 70 ? 'pct-gold' : 'pct-red';
+}
+function barCls(v) {
+  return v >= 100 ? 'bar-green' : v >= 70 ? 'bar-gold' : 'bar-red';
+}
+function rowCls(i) {
+  return i === 0 ? 'p1-row' : i === 1 ? 'p2-row' : i === 2 ? 'p3-row' : '';
+}
+
+function render() {
+  const ranking = buildRanking();
+  const tbody = document.getElementById('tbody');
+
+  // Header
+  const duT = ciclo.duTotal || 0;
+  const duTr = ciclo.duTrabalhados || 0;
+  const fator = (duTr > 0 && duT > 0) ? duT / duTr : 1;
+
+  const fmt = d => {
+    if (!d) return '--';
+    const [y,m,dd] = d.split('-');
+    return `${dd}/${m}/${y}`;
+  };
+  document.getElementById('h-ciclo').textContent = ciclo.inicio ? `${fmt(ciclo.inicio)} → ${fmt(ciclo.fim)}` : 'Ciclo --';
+  document.getElementById('h-du').textContent = `DU: ${duTr || '--'} / ${duT || '--'}`;
+
+  // Summary
+  const totalReal = ranking.reduce((s,r) => s + r.realizado, 0);
+  const totalMeta = ranking.reduce((s,r) => s + r.meta, 0);
+  const totalProj = ranking.reduce((s,r) => s + r.projecao, 0);
+  const pctReal = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+  const pctProj = totalMeta > 0 ? (totalProj / totalMeta) * 100 : 0;
+  const sumProjCls = pctProj >= 100 ? 'green' : pctProj >= 70 ? 'gold' : 'red';
+
+  document.getElementById('s-realizado').textContent = 'R$ ' + moeda(totalReal);
+  document.getElementById('s-meta').textContent = 'R$ ' + moeda(totalMeta);
+  document.getElementById('s-pct-real').textContent = pctReal.toFixed(1) + '%';
+  document.getElementById('s-proj').textContent = 'R$ ' + moeda(totalProj);
+  document.getElementById('s-proj').className = 'sum-value ' + sumProjCls;
+  document.getElementById('s-pct-proj').textContent = pctProj.toFixed(1) + '%';
+  document.getElementById('s-pct-proj').className = 'sum-value ' + sumProjCls;
+  document.getElementById('s-ops').textContent = ranking.length;
+
+  document.getElementById('last-update').textContent = 'Atualizado: ' + new Date().toLocaleString('pt-BR');
+
+  if (!ranking.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div><div class="empty-msg">Nenhum dado disponível. Aguarde a importação do arquivo analítico.</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = ranking.map((r, i) => {
+    const posCls = i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : 'p-rest';
+    const posNum = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}º`;
+    const barW = Math.min(r.pctProj, 100);
+    const pc = pctCls(r.pctProj);
+    const bc = barCls(r.pctProj);
+
+    return `<tr class="${rowCls(i)}">
+      <td><span class="pos ${posCls}">${posNum}</span></td>
+      <td>
+        <div class="op-cell">
+          <div class="op-avatar">${iniciais(r.nome)}</div>
+          <div class="op-name">${r.nome}</div>
+        </div>
+      </td>
+      <td>
+        <div class="val">R$ ${moeda(r.realizado)}</div>
+      </td>
+      <td>
+        <div class="val">R$ ${moeda(r.meta)}</div>
+      </td>
+      <td><span class="pct ${pctCls(r.pctReal)}">${r.pctReal.toFixed(1)}%</span></td>
+      <td>
+        <div class="val">R$ ${moeda(r.projecao)}</div>
+        <div class="val-dim" style="margin-top:4px">
+          <div class="bar-wrap"><div class="bar ${bc}" style="width:${barW}%"></div></div>
+        </div>
+      </td>
+      <td><span class="pct ${pc}">${r.pctProj.toFixed(1)}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// Reactive listeners
+onValue(ref(db, 'metas'), snap => {
+  if (snap.exists()) metas = snap.val();
+  render();
+});
+onValue(ref(db, 'pagamentos'), snap => {
+  pagamentos = snap.exists() ? snap.val() : {};
+  render();
+});
+onValue(ref(db, 'ciclo'), snap => {
+  ciclo = snap.exists() ? snap.val() : {};
+  render();
+});
+
+// Remove loading after first data
+setTimeout(() => {
+  document.getElementById('loading').classList.add('hidden');
+}, 1500);
+</script>
+</body>
+</html>
